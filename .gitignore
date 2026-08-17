@@ -1,0 +1,37 @@
+# ---------------------------------------------------------------------------
+# Intermediate extracts -- DELIBERATELY NOT PUBLISHED.
+#
+# These four files are the full parse of the division's PDF, and they still
+# contain the two fields build_corpus.py excludes from the public corpus on
+# editorial grounds:
+#
+#   email_q         108 non-blank. The field that solicited contact details;
+#                   its redactions leave location-identifying gaps
+#                   ("we are planning to move from .").
+#   employee_where  1 non-blank, and it names an individual staff member's
+#                   school.
+#
+# Both are technically inside the division's own published PDF, but committing
+# them here would turn "buried in 3,106 pages" into "grep-able JSON," which is
+# a different thing in practice and reverses a decision that was made on
+# purpose. Anyone can regenerate all four from the source PDF -- see README.md
+# -- so nothing reproducible is lost by keeping them out.
+# ---------------------------------------------------------------------------
+survey_raw.txt
+survey_clean.txt
+records.json
+records_clean.json
+
+# The source PDF, 9.3 MB. Excluded by default: the division publishes it, and
+# git history is forever. See README.md if you decide to archive it here.
+Redacted-Redistricting-Survey-Raw-Results-Final-June-2026.pdf
+
+# Generated: the artifact build, with the whole corpus inlined. Rebuild with
+# build_site.py. docs/ IS committed -- GitHub Pages serves it.
+site/explorer.build.html
+
+# Local tooling
+.claude/settings.local.json
+__pycache__/
+*.pyc
+.DS_Store

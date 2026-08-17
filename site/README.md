@@ -1,0 +1,147 @@
+# WJCC redistricting survey — site assets
+
+Everything here is generated from the division's published raw-results PDF. Nothing is
+hand-entered, so any number can be traced back to the source.
+
+## Pipeline
+
+```
+Redacted-Redistricting-Survey-Raw-Results-Final-June-2026.pdf   (3,106 pages)
+  │
+  ├─ extract_clean.py   → survey_clean.txt      6,029,114 chars, 1,540 records
+  ├─ parse_clean.py     → records_clean.json    1,540 records × 21 fields
+  ├─ build_corpus.py    → site/comments.json    explorer payload (851 KB)
+  │                       site/comments.csv     reader download
+  └─ build_site.py      → site/explorer.build.html   standalone, data inlined
+```
+
+Run in that order from the repo root; each step overwrites its own output.
+
+### Why `extract_clean.py` exists
+
+The PDF embeds a subset of Aptos that maps `f`, `ff`, `fi` and `fl` to unused
+codepoints (`\x1f`, `U+01AF`, `U+FB01`, `U+FB02`). Every PDF extractor drops them
+identically, which is why naive extractions read "La ayette" for "Lafayette" and
+"speci c" for "specific". `extract_clean.py` restores them with a four-entry
+replacement map plus NFC normalization before anything else runs. Verified: zero
+unmapped control codepoints remain.
+
+### Why `parse_clean.py` exists
+
+It matches the **full** question text rather than a truncated prefix. The truncated
+version left question preamble glued onto answers (`"in the school(s) you are
+associated with | Unsatisfactory"`). Answers are read as the span between two
+question matches, so page-break artifacts collapse into ordinary whitespace instead
+of splitting a field.
+
+## Known export artifacts (handled, not hidden)
+
+The division's export repeats a single answer across whole question groups:
+
+| Group | Identical in |
+|---|---|
+| Elementary / Middle / High scenario answers | 1,539 of 1,540 records |
+| "Does well" / "A wish for the Division" | 1,015 of 1,018 |
+| `relationship_other`, `priorities_other` vs. parent field | 1,540 of 1,540 |
+
+`build_corpus.py` collapses each group to one field, keeping all distinct values in
+the handful of records where the copies genuinely differ. Comment counts are
+therefore **per respondent**, never per school level.
+
+## Fields excluded from the public corpus
+
+Set in `build_corpus.py`:
+
+- **`email_q`** — 108 non-blank. This is the field that solicited contact info, and
+  redaction leaves location-identifying gaps ("we are planning to move from ."). Flip
+  `INCLUDE_EMAIL_Q = True` to publish it.
+- **`employee_where`** — 1 non-blank, and it names an individual staff member's school.
+- **`relationship_other` / `priorities_other`** — byte-identical to their parent field.
+
+No email addresses, phone numbers or street addresses survived redaction. Named
+individuals do appear — Dr. Keever (the superintendent) 21 times, a few others once
+each — so the explorer publishes comment text verbatim including those names.
+
+## Files
+
+| File | What it is |
+|---|---|
+| `charts.html` | Ten-chart artifact source. Content-only HTML: no `<!doctype>`, `<html>`, `<head>` or `<body>` — those are added at publish time. |
+| `explorer.html` | Comment explorer source. Contains the literal placeholder `__CORPUS__`. |
+| `explorer.build.html` | `explorer.html` with `comments.json` inlined. This is what gets published as an artifact. |
+| `comments.json` | Explorer payload. Vocab-indexed to keep it small. |
+| `comments.csv` | Flat one-row-per-respondent download offered in the explorer. |
+| `MIGRATION.md` | Step-by-step plan for moving the explorer into the Astro site. |
+| `substack/*.png` | Charts 1, 2 and 7 as static images, 720 CSS px wide at 3× (2160 px). |
+
+### `comments.json` row schema
+
+```
+{ id: "r0001",          // stable, matches the explorer's #r0001 deep links
+  d:  "2026-06-05",     // recorded date
+  r:  [0, 2],           // indices into vocab.role
+  s:  [4],              // indices into vocab.school
+  z:  1,                // index into support[]; -1 = skipped
+  f:  2,                // index into facilities[]; -1 = skipped
+  p:  [0, 3],           // indices into vocab.priority
+  o:  [1, 4],           // indices into vocab.objective
+  t:  { opinion: "...", critical: "...", ... } }   // omitted keys = blank
+```
+
+## Publishing
+
+### Artifacts (current)
+
+- Ten charts — `https://claude.ai/code/artifact/8b98e6fc-3a69-48b2-b8c7-8db20634f210`
+- Comment explorer — `https://claude.ai/code/artifact/b4a10686-be66-4bb9-b564-f74c870eea6d`
+
+Republish by passing the same URL, otherwise a new one is minted and the old link
+goes stale.
+
+### Substack
+
+Substack strips JavaScript, so featured charts ship as PNGs from `substack/`.
+
+Regenerate them by rendering `charts.html` in a headless browser at a **760 px
+viewport** and screenshotting each `<section>`. The width matters: `.scroller svg`
+carries `min-width: 640px`, so below a ~760 px viewport the card's inner width drops
+under 640 and the chart moves into a horizontal scroller — correct on a live page,
+but an element screenshot then silently crops the right-hand value labels. At 760 px
+the card is 720 px wide, which is a 94% match for Substack's 680 px body column.
+Drop the `<details>` data tables before shooting; they can't be opened in an image.
+
+### Astro (jwcaterine.com)
+
+See **[MIGRATION.md](MIGRATION.md)** for the full plan. The short version:
+
+1. Don't ship `explorer.build.html` — the inlined copy exists only because a hosted
+   artifact can't fetch a sibling file. Ship `explorer.html`.
+2. `import corpusUrl from '../data/comments.json?url'` so Vite emits a content-hashed
+   filename. GitHub Pages can't set `Cache-Control`, so the hash *is* the cache busting.
+   851 KB raw, 247 KB gzipped over the wire.
+3. Replace the `<script type="application/json" id="corpus">__CORPUS__</script>` block
+   with a `fetch()`, and drive init from `astro:page-load` — the site's `BaseLayout`
+   renders `<ClientRouter />`, and scripts don't re-execute after a client-side swap.
+4. Re-anchor the stylesheet under a `.explorer` wrapper. A dozen unqualified element
+   selectors (`body`, `h1`, `a`, `button`, `table`, `code`…) leak site-wide otherwise.
+
+The explorer inserts all survey text with `textContent`, never `innerHTML`. Preserve
+that if you refactor — the corpus is untrusted public input.
+
+## Reproducibility check
+
+Charts 8 and 9 label the exact string searched for every bar, and each count is a
+plain case-insensitive substring match over the five free-text fields. The same
+search typed into the explorer returns the same number. Verify with:
+
+```python
+import json
+d = json.load(open("site/comments.json"))
+texts = ["  ".join(r["t"].values()).lower() for r in d["rows"]]
+print(sum(1 for t in texts if "neighborhood" in t))   # 419
+print(sum(1 for t in texts if "divers" in t))         # 261
+print(sum(1 for t in texts if "colony" in t))         # 115
+```
+
+All 21 keyword counts and every chart series were re-verified against
+`records_clean.json` on 2026-07-25.

@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search the WJCC Redistricting Survey</title>
+<meta name="description" content="Search all 1,374 written responses to the Williamsburg-James City County Schools redistricting survey, taken from the division's published raw results.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Search the WJCC Redistricting Survey">
+<meta property="og:description" content="Search all 1,374 written responses to the Williamsburg-James City County Schools redistricting survey, taken from the division's published raw results.">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://gam32bit.github.io/redistricting/">
+<meta property="og:url" content="https://gam32bit.github.io/redistricting/">
+</head>
+<body>
+<p style="max-width:60rem;margin:0 auto;padding:1rem 1.25rem 0;font-size:.85rem"><a href="https://jwcaterine.com/">← jwcaterine.com</a></p>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #fbfaf7;
+    --surface: #ffffff;
+    --ink: #16150f;
+    --ink-2: #4a4842;
+    --ink-3: #78756c;
+    --rule: #e2dfd6;
+    --rule-2: #cfcbbf;
+    --blue: #2a78d6;
+    --blue-ink: #1c5cab;
+    --mark: #ffe27a;
+    --mark-ink: #16150f;
+    --chip: #f2efe7;
+    --agree: #1c5cab;
+    --disagree: #c73a39;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --bg: #14140f;
+      --surface: #1c1c18;
+      --ink: #f2f0e8;
+      --ink-2: #c3c0b6;
+      --ink-3: #8e8b81;
+      --rule: #34342d;
+      --rule-2: #4a4a42;
+      --blue: #3987e5;
+      --blue-ink: #7fb2f0;
+      --mark: #6b5410;
+      --mark-ink: #fdf6e3;
+      --chip: #26261f;
+      --agree: #7fb2f0;
+      --disagree: #e66767;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #14140f;
+    --surface: #1c1c18;
+    --ink: #f2f0e8;
+    --ink-2: #c3c0b6;
+    --ink-3: #8e8b81;
+    --rule: #34342d;
+    --rule-2: #4a4a42;
+    --blue: #3987e5;
+    --blue-ink: #7fb2f0;
+    --mark: #6b5410;
+    --mark-ink: #fdf6e3;
+    --chip: #26261f;
+    --agree: #7fb2f0;
+    --disagree: #e66767;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 60rem; margin: 0 auto; padding: 2.5rem 1.25rem 5rem; }
+
+  header.masthead { border-bottom: 2px solid var(--ink); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+  .kicker {
+    font-family: var(--sans); font-size: .7rem; font-weight: 600; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--ink-3); margin: 0 0 .5rem;
+  }
+  h1 {
+    font-family: var(--serif); font-size: clamp(1.9rem, 5vw, 2.7rem); line-height: 1.1;
+    margin: 0 0 .6rem; font-weight: 400; text-wrap: balance;
+  }
+  .standfirst { font-family: var(--serif); font-size: 1.06rem; color: var(--ink-2); margin: 0; max-width: 44rem; }
+  .standnote {
+    font-family: var(--serif); font-style: italic; font-size: .93rem;
+    color: var(--ink-3); margin: .7rem 0 0; max-width: 44rem;
+  }
+
+  /* ---- filter row ---- */
+  .controls {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule);
+    padding: .85rem 0 .75rem;
+    margin-bottom: 1.25rem;
+  }
+  .searchline { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+  .searchbox { flex: 1 1 18rem; position: relative; display: flex; }
+  input[type="search"] {
+    width: 100%; font: inherit; font-size: 1rem; padding: .55rem .7rem;
+    border: 1px solid var(--rule-2); border-radius: 6px;
+    background: var(--surface); color: var(--ink);
+  }
+  input[type="search"]:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--blue); outline-offset: 2px;
+  }
+  .filters { margin-top: .35rem; }
+  .fgroup {
+    display: flex; flex-wrap: wrap; gap: .3rem .6rem;
+    align-items: baseline; margin-top: .5rem;
+  }
+  .flabel {
+    font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--ink-3); flex: 0 0 auto; min-width: 5.5rem;
+  }
+  label.flabel { cursor: pointer; min-width: 0; }
+  /* a label and its control wrap as one unit, never apart */
+  .fpair { display: inline-flex; align-items: center; gap: .4rem; }
+  .chips { position: relative; display: flex; flex-wrap: wrap; gap: .3rem; }
+  .bubin { position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; }
+  .bub {
+    display: inline-flex; align-items: baseline; gap: .35rem; cursor: pointer;
+    font-size: .82rem; line-height: 1.35; padding: .22rem .7rem; white-space: nowrap;
+    border: 1px solid var(--rule-2); border-radius: 999px;
+    background: var(--surface); color: var(--ink-2);
+  }
+  .bub:hover { border-color: var(--ink-3); color: var(--ink); }
+  .bubin:checked + .bub {
+    background: var(--ink); border-color: var(--ink); color: var(--bg); font-weight: 500;
+  }
+  .bubin:focus-visible + .bub { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  /* ---- response-date timeline: click a day, or drag across a range ---- */
+  .tl { flex: 1 1 24rem; min-width: 14rem; max-width: 40rem; }
+  .tl-track {
+    display: flex; align-items: flex-end; gap: 1px; height: 34px;
+    border-bottom: 1px solid var(--rule-2); cursor: crosshair;
+    touch-action: none; user-select: none;
+  }
+  .tl-track:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+  .tl-day { flex: 1 1 0; display: flex; align-items: flex-end; height: 100%; }
+  .tl-bar { display: block; width: 100%; background: var(--rule-2); border-radius: 1px 1px 0 0; }
+  .tl-day:hover .tl-bar { background: var(--ink-3); }
+  .tl-day.sel { background: var(--chip); }
+  .tl-day.sel .tl-bar { background: var(--ink); }
+  .tl-day.cur .tl-bar { background: var(--blue); }
+  .tl-axis { position: relative; height: 1.15rem; margin-top: .15rem; }
+  .tl-axis span {
+    position: absolute; top: 0; white-space: nowrap;
+    font-size: .7rem; color: var(--ink-3); font-variant-numeric: tabular-nums;
+  }
+  .tl-clear {
+    font-size: .75rem; padding: .18rem .5rem; border-radius: 999px;
+    align-self: center; color: var(--ink-2);
+  }
+  select {
+    font: inherit; font-size: .85rem; padding: .35rem .5rem; max-width: 13rem;
+    border: 1px solid var(--rule-2); border-radius: 6px;
+    background: var(--surface); color: var(--ink);
+  }
+  button, a.btn {
+    font: inherit; font-size: .85rem; padding: .38rem .7rem; cursor: pointer;
+    border: 1px solid var(--rule-2); border-radius: 6px;
+    background: var(--surface); color: var(--ink);
+  }
+  /* the PDF link wears the same chrome as the two blob-download buttons */
+  a.btn { display: inline-block; text-decoration: none; }
+  button:hover, a.btn:hover { border-color: var(--ink-3); }
+  a.btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  :root[data-theme="dark"] button.primary, :root:where(:not([data-theme="light"])) button.primary { color: #0d0d0a; }
+  @media (prefers-color-scheme: light) { :root:where(:not([data-theme="dark"])) button.primary { color: #fff; } }
+  /* the filter block is tall; on a phone it would eat the viewport if it stuck */
+  @media (max-width: 44rem) { .controls { position: static; } }
+
+  .tabs { display: flex; gap: .25rem; margin-top: .6rem; border-bottom: 1px solid var(--rule); }
+  .tab {
+    border: none; background: none; border-bottom: 2px solid transparent;
+    padding: .45rem .6rem; font-size: .85rem; font-weight: 500; color: var(--ink-3); border-radius: 0;
+  }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--blue); }
+
+  .status { font-size: .85rem; color: var(--ink-2); margin: .9rem 0 1rem; }
+  .status strong { font-variant-numeric: tabular-nums; color: var(--ink); }
+
+  /* ---- comment cards ---- */
+  .card {
+    background: var(--surface); border: 1px solid var(--rule);
+    border-radius: 8px; padding: 1rem 1.1rem; margin-bottom: .85rem;
+  }
+  .card:target { border-color: var(--blue); box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 22%, transparent); }
+  .card-head { display: flex; flex-wrap: wrap; gap: .4rem; align-items: baseline; margin-bottom: .6rem; }
+  .rid {
+    font-family: var(--mono); font-size: .78rem; color: var(--ink-3);
+    text-decoration: none; border-bottom: 1px dotted var(--rule-2);
+  }
+  .rid:hover { color: var(--blue); }
+  .chip {
+    font-size: .72rem; padding: .12rem .45rem; border-radius: 999px;
+    background: var(--chip); color: var(--ink-2); white-space: nowrap;
+  }
+  .chip.agree { color: var(--agree); }
+  .chip.disagree { color: var(--disagree); }
+  .qa { margin: 0 0 .7rem; }
+  .qa:last-child { margin-bottom: 0; }
+  .qlabel {
+    font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--ink-3); margin: 0 0 .15rem;
+  }
+  .qtext { font-family: var(--serif); font-size: 1rem; margin: 0; color: var(--ink); white-space: pre-wrap; }
+  mark { background: var(--mark); color: var(--mark-ink); border-radius: 2px; padding: 0 .1em; }
+
+  /* ---- concordance ---- */
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  .scroller { overflow-x: auto; }
+  th, td { text-align: left; padding: .45rem .6rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .kwic { font-family: var(--serif); }
+  .kwic .pre { color: var(--ink-2); }
+  .kwic .post { color: var(--ink-2); }
+  tr.wordrow { cursor: pointer; }
+  tr.wordrow:hover { background: var(--chip); }
+  .word { font-family: var(--mono); font-size: .85rem; }
+
+  .empty { color: var(--ink-3); font-family: var(--serif); padding: 2rem 0; }
+  .more { display: block; width: 100%; margin: .5rem 0 2rem; padding: .6rem; }
+
+  details.method {
+    margin-top: 2.5rem; border-top: 1px solid var(--rule); padding-top: 1rem;
+    font-size: .85rem; color: var(--ink-2);
+  }
+  details.method summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+  details.method p, details.method li { max-width: 46rem; }
+  code { font-family: var(--mono); font-size: .85em; background: var(--chip); padding: .1em .35em; border-radius: 3px; }
+  footer.meta { margin-top: 1.5rem; font-size: .8rem; color: var(--ink-3); }
+  a { color: var(--blue-ink); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <!-- The window describes the dates recorded in the export, not the survey's
+         announced open/close: the Division labels this same file "May 12-June 7",
+         and the export carries no times to reconcile the two. See OPTION-C.md. -->
+    <p class="kicker">WJCC Schools redistricting survey · responses recorded 13 May – 8 June 2026</p>
+    <h1>Search Redistricting Survey Results</h1>
+    <p class="standfirst">
+      Search what people wrote in the division's redistricting survey. Type a word in the box to
+      see each response that uses it, and use the filters to narrow to a group of respondents, a
+      school, or one of the five questions. Click a day on the response timeline — or drag across
+      several — to keep only the responses from those days. The three tabs switch between reading
+      full responses, listing every mention of your search word in context, and counting the
+      words people used.
+    </p>
+    <p class="standnote">
+      1,374 of the survey's 1,540 respondents wrote something in at least one of the five
+      free-text questions, and those are the responses you can read here.
+    </p>
+  </header>
+
+  <div class="controls">
+    <div class="searchline">
+      <label class="searchbox">
+        <span class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Search the comments</span>
+        <input type="search" id="q" placeholder="Enter keywords here" autocomplete="off">
+      </label>
+      <button id="reset">Reset filters</button>
+    </div>
+
+    <div class="filters">
+      <div class="fgroup">
+        <span class="flabel">Who answered</span>
+        <div class="chips" id="f-role" role="group" aria-label="Filter by who answered"></div>
+      </div>
+
+      <div class="fgroup">
+        <span class="fpair">
+          <label class="flabel" for="f-school">School</label>
+          <select id="f-school"><option value="">Every school</option></select>
+        </span>
+        <span class="fpair">
+          <label class="flabel" for="f-field">Question</label>
+          <select id="f-field"><option value="">All five questions</option></select>
+        </span>
+        <span class="fpair">
+          <label class="flabel" for="f-support">Position</label>
+          <select id="f-support"
+            title="“I would support adjusting attendance zones if necessary to better balance enrollment and address future growth.”"><option
+            value="">Any position on redistricting</option></select>
+        </span>
+      </div>
+
+      <div class="fgroup">
+        <span class="flabel">Responded</span>
+        <div class="tl" id="f-date"></div>
+        <button type="button" class="tl-clear" id="date-clear" hidden>Clear dates</button>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-comments" aria-selected="true">Responses</button>
+      <button class="tab" role="tab" id="tab-kwic" aria-selected="false">Every mention</button>
+      <button class="tab" role="tab" id="tab-words" aria-selected="false">Word counts</button>
+    </div>
+  </div>
+
+  <p class="status" id="status">Loading…</p>
+  <div id="view"></div>
+
+  <details class="method">
+    <summary>How this works</summary>
+    <p>
+      <strong>This tool was built with AI assistance.</strong> The page, the pipeline that
+      produced its data, and some of the wording you're reading were developed with help from
+      Claude Code. AI can make mistakes, so nothing here depends on it having read or interpreted
+      the survey. Every response shown is lifted verbatim from the Division's published PDF by
+      script — nothing is hand-entered, and no comment is summarized, paraphrased or ranked.
+      One real extraction fault was found and fixed: the PDF's embedded font maps
+      <code>f</code>, <code>ff</code>, <code>fi</code> and <code>fl</code> to unused codepoints,
+      so every extractor silently drops them, turning "Lafayette" into "La ayette." Those glyphs
+      are restored from an explicit replacement map, and the text was checked to leave no unmapped
+      codepoints behind. The export's duplicated question groups — where the Division's file
+      repeats one answer under several questions — were detected and collapsed rather than counted
+      twice. Where it matters, check any response against the source PDF linked at the foot of
+      this page; it is the authority, not this page.
+    </p>
+    <p>
+      <strong>Search is literal.</strong> Typing <code>bus</code> finds the exact letters
+      <code>b-u-s</code>, case-insensitively, with accents folded (<code>Más</code> matches
+      <code>mas</code>). It also matches inside words — <code>bus</code> hits
+      <code>buses</code> and <code>business</code> — so a longer search word is a narrower one.
+      There is no stemming, no synonyms, no relevance ranking, and no AI:
+      the same query always returns the same rows, in survey order, and "Every mention"
+      shows all of them so you can count them yourself.
+    </p>
+    <p>
+      <strong>Who answered.</strong> This was an open, self-selected survey, not a
+      representative sample. The survey's intake form did not require participants to verify
+      that they live within WJCC, and nothing prevented the same person from completing the
+      survey more than once.
+    </p>
+  </details>
+
+  <footer class="meta">
+    <p>
+      Source: <em>Redacted Redistricting Survey Raw Results</em>, Williamsburg–James City County
+      Schools, June 2026 (3,106 pages).
+      <button id="dl-csv">Download CSV</button>
+      <button id="dl-json">Download JSON</button>
+      <a class="btn"
+         href="https://wjccschools.org/wp-content/uploads/2026/06/Redacted-Redistricting-Survey-Raw-Results-Final-June-2026.pdf"
+         target="_blank" rel="noopener">Download PDF</a>
+      — CSV and JSON reflect the filters currently applied; the PDF is the Division's
+      complete original.
+    </p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // Relative, not "/data/...": a project Pages site is served from a subpath.
+  fetch("data/comments.json")
+    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(start)
+    .catch(function () {
+      document.getElementById("status").textContent =
+        "The responses didn't load. Reload the page, or read the source PDF linked below.";
+    });
+
+  function start(DATA) {
+  var ROWS = DATA.rows;
+  var VOCAB = DATA.vocab;
+  var FIELDS = DATA.fields;
+  var SUPPORT = DATA.support;
+
+  // ---- deterministic text matching -------------------------------------
+  // Fold accents and case once per row, and keep the folded string the SAME
+  // LENGTH as the original so match offsets map straight back onto the
+  // displayed text.
+  function fold(s) {
+    var f = s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    // Offsets from the folded string index back into the displayed text, so a
+    // fold that changed the length would misplace every highlight. Decomposing
+    // then stripping the marks is length-preserving for this corpus; bail out
+    // to plain lowercasing if that ever stops being true.
+    return f.length === s.length ? f : s.toLowerCase();
+  }
+  ROWS.forEach(function (r) {
+    r._f = {};
+    FIELDS.forEach(function (f) {
+      if (r.t[f.key]) r._f[f.key] = fold(r.t[f.key]);
+    });
+  });
+
+  function findAll(hay, needle) {
+    var out = [], i = hay.indexOf(needle);
+    while (i !== -1) { out.push(i); i = hay.indexOf(needle, i + 1); }
+    return out;
+  }
+
+  // ---- state ------------------------------------------------------------
+  // roles is multi-select (empty array = no filter); the three dropdowns are
+  // single-select; from/to is an inclusive ISO date range, null when unset.
+  var state = { q: "", roles: [], school: "", support: "", field: "",
+                from: null, to: null, tab: "comments", limit: 40 };
+
+  var el = {
+    q: document.getElementById("q"),
+    role: document.getElementById("f-role"),
+    dateClear: document.getElementById("date-clear"),
+    school: document.getElementById("f-school"),
+    support: document.getElementById("f-support"),
+    date: document.getElementById("f-date"),
+    field: document.getElementById("f-field"),
+    reset: document.getElementById("reset"),
+    status: document.getElementById("status"),
+    view: document.getElementById("view"),
+    tabs: {
+      comments: document.getElementById("tab-comments"),
+      kwic: document.getElementById("tab-kwic"),
+      words: document.getElementById("tab-words")
+    }
+  };
+
+  function opt(select, value, label) {
+    var o = document.createElement("option");
+    o.value = value;
+    o.textContent = label;
+    select.appendChild(o);
+  }
+  VOCAB.school.slice().map(function (s, i) { return [s, i]; })
+    .sort(function (a, b) { return a[0].localeCompare(b[0]); })
+    .forEach(function (p) { opt(el.school, String(p[1]), p[0]); });
+
+  // Plain-English names for the bubbles. The vocabulary strings the Division
+  // used are too long to wear as buttons; full text stays in the tooltip.
+  var ROLE_SHORT = {
+    "Division Staff Member": "WJCC staff",
+    "Parent/Guardian of Division Student(s)": "Parent/guardian",
+    "Community Member": "Community member",
+    "Division Student": "Student",
+    "Other Stakeholder": "Other"
+  };
+  FIELDS.forEach(function (f) { opt(el.field, f.key, f.label); });
+  SUPPORT.forEach(function (s, i) { opt(el.support, String(i), s); });
+  opt(el.support, "-1", "Didn't answer");
+
+  // A bubble is a hidden checkbox plus a styled label, so keyboard and screen
+  // readers get the real control and Reset is just `checked = false`.
+  function bubbles(container, name, items) {
+    var made = [];
+    items.forEach(function (it, i) {
+      var id = name + "-b" + i;
+      var input = document.createElement("input");
+      input.type = "checkbox"; input.className = "bubin"; input.id = id; input.value = it.value;
+      var label = document.createElement("label");
+      label.className = "bub"; label.htmlFor = id;
+      label.appendChild(document.createTextNode(it.label));
+      if (it.title) label.title = it.title;
+      container.appendChild(input);
+      container.appendChild(label);
+      made.push({ input: input, label: label, key: it.value });
+    });
+    return made;
+  }
+
+  var roleBubbles = bubbles(el.role, "role", VOCAB.role.map(function (r, i) {
+    return { value: String(i), label: ROLE_SHORT[r] || r, title: r };
+  }));
+
+  function checked(list) {
+    return list.filter(function (b) { return b.input.checked; })
+               .map(function (b) { return b.key; });
+  }
+
+  // ---- filtering --------------------------------------------------------
+  function activeFields() {
+    if (!state.field) return FIELDS;
+    return FIELDS.filter(function (f) { return f.key === state.field; });
+  }
+  function anyOf(have, want) {
+    for (var i = 0; i < want.length; i++) if (have.indexOf(+want[i]) !== -1) return true;
+    return false;
+  }
+
+  // Returns matching rows; when a query is present each row carries the
+  // per-field match offsets that produced it.
+  function select() {
+    var needle = fold(state.q.trim());
+    var fields = activeFields();
+    var out = [];
+
+    for (var i = 0; i < ROWS.length; i++) {
+      var r = ROWS[i];
+      if (state.roles.length && !anyOf(r.r, state.roles)) continue;
+      if (state.school !== "" && r.s.indexOf(+state.school) === -1) continue;
+      if (state.support !== "" && r.z !== +state.support) continue;
+      // ISO dates compare as plain strings, so the range test needs no parsing
+      if (state.from && (r.d < state.from || r.d > state.to)) continue;
+
+      var hits = null, total = 0;
+      if (needle) {
+        hits = {};
+        for (var j = 0; j < fields.length; j++) {
+          var k = fields[j].key, hay = r._f[k];
+          if (!hay) continue;
+          var at = findAll(hay, needle);
+          if (at.length) { hits[k] = at; total += at.length; }
+        }
+        if (!total) continue;
+      } else if (state.field) {
+        if (!r._f[state.field]) continue;
+      } else if (!r.t || !Object.keys(r.t).length) {
+        continue;
+      }
+      out.push({ row: r, hits: hits, total: total });
+    }
+    return out;
+  }
+
+  /* ---- response-date timeline -------------------------------------------
+     One cell per day of the survey window, bar height linear in the number of
+     responses that day (so June 5's 419 towers over the rest, as it should).
+     Click a day to select it; drag across to select a range; arrow keys walk
+     the days and Shift+arrow extends, so the control works without a mouse. */
+  var DAYS = Object.keys(ROWS.reduce(function (a, r) { if (r.d) a[r.d] = 1; return a; }, {})).sort();
+  var DAYN = {};
+  DAYS.forEach(function (d) { DAYN[d] = 0; });
+  ROWS.forEach(function (r) { if (r.d && r.t && Object.keys(r.t).length) DAYN[r.d]++; });
+
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  function dayLabel(iso) {
+    var p = iso.split("-");
+    return MONTHS[+p[1] - 1] + " " + (+p[2]);
+  }
+
+  var track = E("div", "tl-track");
+  track.tabIndex = 0;
+  track.setAttribute("role", "group");
+  track.setAttribute("aria-label",
+    "Filter by response date. Click a day or drag across days; arrow keys move, " +
+    "shift with an arrow key extends the range, Escape clears.");
+  var maxDay = DAYS.reduce(function (m, d) { return Math.max(m, DAYN[d]); }, 0);
+  var dayCells = DAYS.map(function (d) {
+    var cell = E("div", "tl-day");
+    cell.title = dayLabel(d) + " · " + DAYN[d].toLocaleString() +
+      " response" + (DAYN[d] === 1 ? "" : "s") + " with written answers";
+    var bar = E("i", "tl-bar");
+    // linear, so June 5's spike reads at its true size; the floor only keeps
+    // the quietest days visible enough to aim at
+    bar.style.height = Math.max(8, Math.round(100 * DAYN[d] / maxDay)) + "%";
+    cell.appendChild(bar);
+    track.appendChild(cell);
+    return cell;
+  });
+  var axis = E("div", "tl-axis");
+  [0, 7, 14, 21, DAYS.length - 1].forEach(function (i) {
+    var s = E("span", null, dayLabel(DAYS[i]));
+    if (i === 0) s.style.left = "0";
+    else if (i === DAYS.length - 1) { s.style.left = "100%"; s.style.transform = "translateX(-100%)"; }
+    else {
+      s.style.left = (100 * (i + 0.5) / DAYS.length) + "%";
+      s.style.transform = "translateX(-50%)";
+    }
+    axis.appendChild(s);
+  });
+  el.date.appendChild(track);
+  el.date.appendChild(axis);
+
+  var cursor = 0;       // day the keyboard is on
+  var anchor = 0;       // day a range grows out of, for both drag and shift-arrow
+  var dragging = false;
+  var undoOnUp = false;  // this press landed on the lone selected day
+
+  function paintDays() {
+    var lo = state.from ? DAYS.indexOf(state.from) : -1;
+    var hi = state.to ? DAYS.indexOf(state.to) : -1;
+    dayCells.forEach(function (cell, i) {
+      cell.classList.toggle("sel", lo >= 0 && i >= lo && i <= hi);
+      cell.classList.toggle("cur", document.activeElement === track && i === cursor);
+    });
+    el.dateClear.hidden = !state.from;
+  }
+  function setRange(a, b) {
+    var lo = Math.min(a, b), hi = Math.max(a, b);
+    state.from = DAYS[lo];
+    state.to = DAYS[hi];
+    state.limit = 40;
+    render();
+  }
+  function clearRange() {
+    state.from = state.to = null;
+    state.limit = 40;
+    render();
+  }
+  function dayAt(clientX) {
+    var box = track.getBoundingClientRect();
+    var i = Math.floor((clientX - box.left) / box.width * DAYS.length);
+    return Math.max(0, Math.min(DAYS.length - 1, i));
+  }
+
+  track.addEventListener("pointerdown", function (ev) {
+    ev.preventDefault();
+    track.focus();
+    var i = dayAt(ev.clientX);
+    // A click on the one day already selected clears the filter — but only if
+    // it stays a click: deciding on pointerup keeps a drag that starts there
+    // from cancelling itself.
+    undoOnUp = !!state.from && state.from === state.to && state.from === DAYS[i];
+    dragging = true;
+    anchor = cursor = i;
+    capture(ev, true);
+    setRange(anchor, anchor);
+  });
+  track.addEventListener("pointermove", function (ev) {
+    if (!dragging) return;
+    cursor = dayAt(ev.clientX);
+    setRange(anchor, cursor);
+  });
+  track.addEventListener("pointerup", function (ev) {
+    dragging = false;
+    capture(ev, false);
+    if (undoOnUp && cursor === anchor) clearRange();
+    undoOnUp = false;
+  });
+  // Pointer capture keeps a drag alive past the edge of the track. It is
+  // optional: a stale or unsupported pointer id throws, and the drag still
+  // works from the events the track receives on its own.
+  function capture(ev, on) {
+    try {
+      if (on) track.setPointerCapture(ev.pointerId);
+      else if (track.hasPointerCapture(ev.pointerId)) track.releasePointerCapture(ev.pointerId);
+    } catch (e) { /* no capture available; drag degrades to in-track only */ }
+  }
+  track.addEventListener("keydown", function (ev) {
+    var step = ev.key === "ArrowLeft" ? -1 : ev.key === "ArrowRight" ? 1 : 0;
+    var last = DAYS.length - 1;
+    if (step) {
+      ev.preventDefault();
+      cursor = Math.max(0, Math.min(last, cursor + step));
+      if (ev.shiftKey && state.from) {
+        setRange(anchor, cursor);
+      } else {
+        anchor = cursor;
+        setRange(cursor, cursor);
+      }
+    } else if (ev.key === "Home" || ev.key === "End") {
+      ev.preventDefault();
+      anchor = cursor = ev.key === "Home" ? 0 : last;
+      setRange(cursor, cursor);
+    } else if (ev.key === "Escape") {
+      ev.preventDefault();
+      clearRange();
+    }
+  });
+  track.addEventListener("focus", paintDays);
+  track.addEventListener("blur", paintDays);
+  el.dateClear.addEventListener("click", clearRange);
+
+  // ---- rendering helpers ------------------------------------------------
+  function E(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;   // never innerHTML: survey text is untrusted
+    return n;
+  }
+
+  function highlight(target, text, offsets, len) {
+    if (!offsets || !offsets.length) { target.textContent = text; return; }
+    var at = 0;
+    offsets.forEach(function (i) {
+      if (i > at) target.appendChild(document.createTextNode(text.slice(at, i)));
+      target.appendChild(E("mark", null, text.slice(i, i + len)));
+      at = i + len;
+    });
+    if (at < text.length) target.appendChild(document.createTextNode(text.slice(at)));
+  }
+
+  function chips(row) {
+    var frag = document.createDocumentFragment();
+    row.r.forEach(function (i) { frag.appendChild(E("span", "chip", VOCAB.role[i])); });
+    row.s.forEach(function (i) { frag.appendChild(E("span", "chip", VOCAB.school[i])); });
+    if (row.z >= 0) {
+      var c = E("span", "chip " + (row.z <= 1 ? "agree" : "disagree"), SUPPORT[row.z] + " with redistricting");
+      frag.appendChild(c);
+    } else {
+      frag.appendChild(E("span", "chip", "Skipped the redistricting question"));
+    }
+    if (row.d) frag.appendChild(E("span", "chip", row.d));
+    return frag;
+  }
+
+  function renderComments(sel) {
+    var frag = document.createDocumentFragment();
+    var shown = sel.slice(0, state.limit);
+    var len = state.q.trim().length;
+
+    shown.forEach(function (item) {
+      var row = item.row;
+      var card = E("article", "card");
+      card.id = row.id;
+
+      var head = E("div", "card-head");
+      var a = E("a", "rid", "#" + row.id);
+      a.href = "#" + row.id;
+      head.appendChild(a);
+      head.appendChild(chips(row));
+      card.appendChild(head);
+
+      activeFields().forEach(function (f) {
+        var text = row.t[f.key];
+        if (!text) return;
+        var block = E("div", "qa");
+        block.appendChild(E("p", "qlabel", f.label));
+        var p = E("p", "qtext");
+        highlight(p, text, item.hits ? item.hits[f.key] : null, len);
+        block.appendChild(p);
+        card.appendChild(block);
+      });
+
+      frag.appendChild(card);
+    });
+
+    el.view.appendChild(frag);
+
+    if (sel.length > state.limit) {
+      var more = E("button", "more", "Show " + Math.min(40, sel.length - state.limit) +
+        " more (" + (sel.length - state.limit).toLocaleString() + " remaining)");
+      more.addEventListener("click", function () { state.limit += 40; render(); });
+      el.view.appendChild(more);
+    }
+  }
+
+  function renderKwic(sel) {
+    var len = state.q.trim().length;
+    if (!len) {
+      el.view.appendChild(E("p", "empty", "Type a word above to see every place it appears."));
+      return;
+    }
+    var rows = [];
+    sel.forEach(function (item) {
+      activeFields().forEach(function (f) {
+        var offsets = item.hits && item.hits[f.key];
+        if (!offsets) return;
+        var text = item.row.t[f.key];
+        offsets.forEach(function (i) {
+          rows.push({ id: item.row.id, label: f.label, text: text, at: i });
+        });
+      });
+    });
+
+    var cap = 400;
+    var table = E("table");
+    var thead = E("thead"), htr = E("tr");
+    ["Response", "Question", "In context"].forEach(function (h) { htr.appendChild(E("th", null, h)); });
+    thead.appendChild(htr);
+    table.appendChild(thead);
+
+    var tbody = E("tbody");
+    rows.slice(0, cap).forEach(function (h) {
+      var tr = E("tr");
+      var td1 = E("td");
+      var a = E("a", "rid", h.id);
+      a.href = "#" + h.id;
+      a.addEventListener("click", function () { setTab("comments"); });
+      td1.appendChild(a);
+      tr.appendChild(td1);
+      tr.appendChild(E("td", null, h.label));
+
+      var td3 = E("td", "kwic");
+      var from = Math.max(0, h.at - 70), to = Math.min(h.text.length, h.at + len + 70);
+      td3.appendChild(E("span", "pre", (from > 0 ? "…" : "") + h.text.slice(from, h.at)));
+      td3.appendChild(E("mark", null, h.text.slice(h.at, h.at + len)));
+      td3.appendChild(E("span", "post", h.text.slice(h.at + len, to) + (to < h.text.length ? "…" : "")));
+      tr.appendChild(td3);
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    var note = E("p", "status");
+    note.appendChild(E("strong", null, rows.length.toLocaleString()));
+    note.appendChild(document.createTextNode(
+      " mention" + (rows.length === 1 ? "" : "s") + " of “" + state.q.trim() + "” across " +
+      sel.length.toLocaleString() + " response" + (sel.length === 1 ? "" : "s") +
+      (rows.length > cap ? " — first " + cap + " shown." : ".")));
+    el.view.appendChild(note);
+
+    var scroller = E("div", "scroller");
+    scroller.appendChild(table);
+    el.view.appendChild(scroller);
+  }
+
+  var STOP = ("a about after all also am an and any are as at be because been but by can could did do does " +
+    "for from get go had has have he her here him his how i if in into is it its just like make me more most " +
+    "my no not now of on one only or other our out over said same see she should so some such than that the " +
+    "their them then there these they this those through to too under up us very was way we were what when " +
+    "where which who will with would you your it's don't i'm we've they're").split(" ");
+  var STOPSET = STOP.reduce(function (a, w) { a[w] = 1; return a; }, {});
+
+  function renderWords(sel) {
+    var counts = {}, docs = {};
+    sel.forEach(function (item) {
+      var seen = {};
+      activeFields().forEach(function (f) {
+        var t = item.row._f[f.key];
+        if (!t) return;
+        var words = t.match(/[a-z][a-z']{2,}/g);
+        if (!words) return;
+        words.forEach(function (w) {
+          if (STOPSET[w]) return;
+          counts[w] = (counts[w] || 0) + 1;
+          if (!seen[w]) { seen[w] = 1; docs[w] = (docs[w] || 0) + 1; }
+        });
+      });
+    });
+
+    var list = Object.keys(counts).map(function (w) { return [w, counts[w], docs[w]]; });
+    list.sort(function (a, b) { return b[2] - a[2] || b[1] - a[1] || a[0].localeCompare(b[0]); });
+
+    el.view.appendChild(E("p", "status",
+      "Every word used in " + sel.length.toLocaleString() + " responses, minus " + STOP.length +
+      " common English words. Click a row to read the mentions."));
+
+    var table = E("table");
+    var thead = E("thead"), htr = E("tr");
+    ["Word", "Responses using it", "Total uses"].forEach(function (h, i) {
+      var th = E("th", i ? "num" : null, h);
+      htr.appendChild(th);
+    });
+    thead.appendChild(htr);
+    table.appendChild(thead);
+
+    var tbody = E("tbody");
+    list.slice(0, 250).forEach(function (w) {
+      var tr = E("tr", "wordrow");
+      tr.tabIndex = 0;
+      tr.appendChild(E("td", "word", w[0]));
+      tr.appendChild(E("td", "num", w[2].toLocaleString()));
+      tr.appendChild(E("td", "num", w[1].toLocaleString()));
+      function go() { el.q.value = w[0]; state.q = w[0]; state.limit = 40; setTab("kwic"); }
+      tr.addEventListener("click", go);
+      tr.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    var scroller = E("div", "scroller");
+    scroller.appendChild(table);
+    el.view.appendChild(scroller);
+  }
+
+  // ---- main render ------------------------------------------------------
+  var current = [];
+
+  function describe(sel) {
+    var bits = [];
+    var q = state.q.trim();
+    el.status.textContent = "";
+    el.status.appendChild(E("strong", null, sel.length.toLocaleString()));
+    // 166 of the 1,540 respondents left every written box blank, so the count
+    // with no query on is 1,374 — say why rather than leaving it a puzzle.
+    el.status.appendChild(document.createTextNode(
+      " of " + DATA.meta.n.toLocaleString() + " responses" +
+      (q ? " contain “" + q + "”" : " have a written answer")));
+    if (state.roles.length)
+      bits.push(state.roles.map(function (i) { return VOCAB.role[+i]; }).join(" or "));
+    if (state.school !== "") bits.push(VOCAB.school[+state.school]);
+    if (state.support !== "")
+      bits.push(+state.support >= 0 ? SUPPORT[+state.support] : "skipped the redistricting question");
+    if (state.from)
+      bits.push("answered " + dayLabel(state.from) +
+                (state.to !== state.from ? " – " + dayLabel(state.to) : ""));
+    if (state.field !== "")
+      bits.push("in “" + activeFields()[0].label + "”");
+    if (bits.length) el.status.appendChild(document.createTextNode(" — " + bits.join(", ")));
+    el.status.appendChild(document.createTextNode("."));
+  }
+
+  function render() {
+    current = select();
+    paintDays();
+    describe(current);
+    el.view.textContent = "";
+    if (!current.length) {
+      el.view.appendChild(E("p", "empty", "No responses match. Try a shorter word, or reset the filters."));
+      return;
+    }
+    if (state.tab === "comments") renderComments(current);
+    else if (state.tab === "kwic") renderKwic(current);
+    else renderWords(current);
+  }
+
+  function setTab(name) {
+    state.tab = name;
+    Object.keys(el.tabs).forEach(function (k) {
+      el.tabs[k].setAttribute("aria-selected", String(k === name));
+    });
+    render();
+  }
+
+  // ---- events -----------------------------------------------------------
+  var timer;
+  el.q.addEventListener("input", function () {
+    clearTimeout(timer);
+    timer = setTimeout(function () { state.q = el.q.value; state.limit = 40; render(); }, 120);
+  });
+  el.role.addEventListener("change", function () {
+    state.roles = checked(roleBubbles); state.limit = 40; render();
+  });
+  [["school", "school"], ["field", "field"], ["support", "support"]].forEach(function (p) {
+    el[p[0]].addEventListener("change", function () {
+      state[p[1]] = el[p[0]].value; state.limit = 40; render();
+    });
+  });
+  el.reset.addEventListener("click", function () {
+    state = { q: "", roles: [], school: "", support: "", field: "",
+              from: null, to: null, tab: state.tab, limit: 40 };
+    el.q.value = "";
+    el.school.value = ""; el.field.value = ""; el.support.value = "";
+    roleBubbles.forEach(function (b) { b.input.checked = false; });
+    render();
+  });
+  Object.keys(el.tabs).forEach(function (k) {
+    el.tabs[k].addEventListener("click", function () { setTab(k); });
+  });
+
+  // ---- downloads (current selection) ------------------------------------
+  function download(name, mime, text) {
+    var blob = new Blob([text], { type: mime });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+  function csvCell(v) { return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; }
+
+  document.getElementById("dl-csv").addEventListener("click", function () {
+    var head = ["id", "date", "roles", "schools", "support", "priorities", "objectives"]
+      .concat(FIELDS.map(function (f) { return f.key; }));
+    var lines = [head.map(csvCell).join(",")];
+    current.forEach(function (item) {
+      var r = item.row;
+      lines.push([
+        r.id, r.d,
+        r.r.map(function (i) { return VOCAB.role[i]; }).join("; "),
+        r.s.map(function (i) { return VOCAB.school[i]; }).join("; "),
+        r.z >= 0 ? SUPPORT[r.z] : "",
+        r.p.map(function (i) { return VOCAB.priority[i]; }).join("; "),
+        r.o.map(function (i) { return VOCAB.objective[i]; }).join("; ")
+      ].concat(FIELDS.map(function (f) { return r.t[f.key] || ""; })).map(csvCell).join(","));
+    });
+    download("wjcc-survey-comments.csv", "text/csv", lines.join("\n"));
+  });
+
+  document.getElementById("dl-json").addEventListener("click", function () {
+    download("wjcc-survey-comments.json", "application/json", JSON.stringify({
+      meta: DATA.meta, vocab: VOCAB, support: SUPPORT, fields: FIELDS,
+      rows: current.map(function (i) {
+        var r = i.row, o = {};
+        Object.keys(r).forEach(function (k) { if (k !== "_f") o[k] = r[k]; });
+        return o;
+      })
+    }, null, 1));
+  });
+
+  // ---- deep link --------------------------------------------------------
+  function jumpToHash() {
+    var id = location.hash.replace("#", "");
+    if (!/^r\d{4}$/.test(id)) return;
+    var i = ROWS.findIndex(function (r) { return r.id === id; });
+    if (i < 0) return;
+    if (i >= state.limit) { state.limit = i + 41; render(); }
+    var node = document.getElementById(id);
+    if (node) node.scrollIntoView({ block: "center" });
+  }
+
+  render();
+  jumpToHash();
+  window.addEventListener("hashchange", jumpToHash);
+  }
+})();
+</script>
+</body>
+</html>
