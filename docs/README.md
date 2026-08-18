@@ -30,8 +30,12 @@ source PDF. Hand-edits here are overwritten on the next build. Fix things upstre
 
 ## Deploying
 
-GitHub Pages, Settings → Pages → deploy from branch `main`, folder `/` (root). No build
+GitHub Pages, Settings → Pages → deploy from branch `main`, folder **`/docs`**. No build
 step, no Actions workflow.
+
+The folder matters: the repo root holds the pipeline scripts and no `index.html`, so
+selecting `/` (root) makes Pages fall back to rendering the root `README.md` through
+Jekyll instead of serving this page.
 
 The page fetches `data/comments.json` by **relative** path, so it works both at
 `<user>.github.io/<repo>/` and at a custom domain. Don't change it to an absolute `/data/...`
