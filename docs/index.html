@@ -228,7 +228,7 @@
   .scroller { overflow-x: auto; }
   th, td { text-align: left; padding: .45rem .6rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
   th { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
-  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .kwic { font-family: var(--serif); }
   .kwic .pre { color: var(--ink-2); }
   .kwic .post { color: var(--ink-2); }
@@ -247,6 +247,8 @@
   details.method p, details.method li { max-width: 46rem; }
   code { font-family: var(--mono); font-size: .85em; background: var(--chip); padding: .1em .35em; border-radius: 3px; }
   footer.meta { margin-top: 1.5rem; font-size: .8rem; color: var(--ink-3); }
+  /* the three downloads read as one row of controls, not as tail-end prose */
+  .downloads { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem; }
   a { color: var(--blue-ink); }
 
   @media (prefers-reduced-motion: reduce) {
@@ -361,15 +363,16 @@
   <footer class="meta">
     <p>
       Source: <em>Redacted Redistricting Survey Raw Results</em>, Williamsburg–James City County
-      Schools, June 2026 (3,106 pages).
+      Schools, June 2026 (3,106 pages). CSV and JSON reflect the filters currently applied;
+      the PDF is the Division's complete original.
+    </p>
+    <div class="downloads">
       <button id="dl-csv">Download CSV</button>
       <button id="dl-json">Download JSON</button>
       <a class="btn"
          href="https://wjccschools.org/wp-content/uploads/2026/06/Redacted-Redistricting-Survey-Raw-Results-Final-June-2026.pdf"
          target="_blank" rel="noopener">Download PDF</a>
-      — CSV and JSON reflect the filters currently applied; the PDF is the Division's
-      complete original.
-    </p>
+    </div>
   </footer>
 </div>
 
