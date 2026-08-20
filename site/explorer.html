@@ -114,7 +114,7 @@
   }
   label.flabel { cursor: pointer; min-width: 0; }
   /* a label and its control wrap as one unit, never apart */
-  .fpair { display: inline-flex; align-items: center; gap: .4rem; }
+  .fpair { position: relative; display: inline-flex; align-items: center; gap: .4rem; }
   .chips { position: relative; display: flex; flex-wrap: wrap; gap: .3rem; }
   .bubin { position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; }
   .bub {
@@ -130,7 +130,17 @@
   .bubin:focus-visible + .bub { outline: 2px solid var(--blue); outline-offset: 2px; }
 
   /* ---- response-date timeline: click a day, or drag across a range ---- */
-  .tl { flex: 1 1 24rem; min-width: 14rem; max-width: 40rem; }
+  /* Fills the rest of the row: .fgroup and .searchline share a content box, so
+     the track's right edge lands on the Reset filters button's. */
+  .tl { flex: 1 1 auto; min-width: 14rem; }
+  /* The label is a fixed column holding "Clear" as well. Keeping that button out
+     of the flex row is what stops the track resizing under the pointer the moment
+     a day is picked -- mid-drag that would move every day cell. */
+  .fgroup-date { flex-wrap: nowrap; }
+  .dlabel {
+    flex: 0 0 8rem; display: flex; flex-direction: column;
+    align-items: flex-start; gap: .3rem;
+  }
   .tl-track {
     display: flex; align-items: flex-end; gap: 1px; height: 34px;
     border-bottom: 1px solid var(--rule-2); cursor: crosshair;
@@ -149,13 +159,24 @@
     font-size: .7rem; color: var(--ink-3); font-variant-numeric: tabular-nums;
   }
   .tl-clear {
-    font-size: .75rem; padding: .18rem .5rem; border-radius: 999px;
-    align-self: center; color: var(--ink-2);
+    font-size: .7rem; padding: .1rem .4rem; color: var(--ink-2);
+    text-transform: none; letter-spacing: 0; font-weight: 400;
   }
   select {
-    font: inherit; font-size: .85rem; padding: .35rem .5rem; max-width: 13rem;
+    font: inherit; font-size: .85rem; padding: .35rem 1.7rem .35rem .5rem; max-width: 15rem;
     border: 1px solid var(--rule-2); border-radius: 6px;
     background: var(--surface); color: var(--ink);
+    appearance: none; -webkit-appearance: none;
+    text-overflow: ellipsis;
+  }
+  /* The chevron is ours, not the UA's: the native one paints over the option text
+     rather than reserving space for itself, so a long school name ran under it.
+     Drawn on .fpair (whose right edge is the select's) so it can use currentColor. */
+  .fpair::after {
+    content: ""; position: absolute; right: .62rem; top: 50%; margin-top: -.3rem;
+    width: .4rem; height: .4rem; pointer-events: none;
+    border-right: 1.5px solid var(--ink-3); border-bottom: 1.5px solid var(--ink-3);
+    transform: rotate(45deg);
   }
   button, a.btn {
     font: inherit; font-size: .85rem; padding: .38rem .7rem; cursor: pointer;
@@ -171,13 +192,13 @@
   @media (prefers-color-scheme: light) { :root:where(:not([data-theme="dark"])) button.primary { color: #fff; } }
   /* the filter block is tall; on a phone it would eat the viewport if it stuck */
   @media (max-width: 44rem) { .controls { position: static; } }
-
-  .tabs { display: flex; gap: .25rem; margin-top: .6rem; border-bottom: 1px solid var(--rule); }
-  .tab {
-    border: none; background: none; border-bottom: 2px solid transparent;
-    padding: .45rem .6rem; font-size: .85rem; font-weight: 500; color: var(--ink-3); border-radius: 0;
+  /* the date row can't wrap without the track jumping, so give it back the width
+     it needs on a phone -- at 360px the 5.5rem label plus a 14rem track overflows */
+  @media (max-width: 30rem) {
+    .dlabel { flex: 0 0 6rem; }   /* the label wraps to two lines here; the track keeps its width */
+    .tl { min-width: 0; }
+    select { max-width: 11rem; }
   }
-  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--blue); }
 
   .status { font-size: .85rem; color: var(--ink-2); margin: .9rem 0 1rem; }
   .status strong { font-variant-numeric: tabular-nums; color: var(--ink); }
@@ -209,21 +230,16 @@
   .qtext { font-family: var(--serif); font-size: 1rem; margin: 0; color: var(--ink); white-space: pre-wrap; }
   mark { background: var(--mark); color: var(--mark-ink); border-radius: 2px; padding: 0 .1em; }
 
-  /* ---- concordance ---- */
-  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
-  .scroller { overflow-x: auto; }
-  th, td { text-align: left; padding: .45rem .6rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  th { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
-  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .kwic { font-family: var(--serif); }
-  .kwic .pre { color: var(--ink-2); }
-  .kwic .post { color: var(--ink-2); }
-  tr.wordrow { cursor: pointer; }
-  tr.wordrow:hover { background: var(--chip); }
-  .word { font-family: var(--mono); font-size: .85rem; }
-
   .empty { color: var(--ink-3); font-family: var(--serif); padding: 2rem 0; }
   .more { display: block; width: 100%; margin: .5rem 0 2rem; padding: .6rem; }
+
+  .jumps { margin: .8rem 0 0; font-size: .85rem; color: var(--ink-3); }
+  /* .controls is sticky and ~226px tall when stuck; land clear of it, not behind it.
+     Both targets sit near the document end, so an overshoot just clamps. */
+  #how-it-works, #downloads { scroll-margin-top: 15rem; }
+  /* "Back to top" means the top: .wrap starts below the page padding, and below the
+     site nav build_pages.py prepends, so overshoot and let the scroll clamp at 0. */
+  #top { scroll-margin-top: 6rem; }
 
   details.method {
     margin-top: 2.5rem; border-top: 1px solid var(--rule); padding-top: 1rem;
@@ -233,6 +249,11 @@
   details.method p, details.method li { max-width: 46rem; }
   code { font-family: var(--mono); font-size: .85em; background: var(--chip); padding: .1em .35em; border-radius: 3px; }
   footer.meta { margin-top: 1.5rem; font-size: .8rem; color: var(--ink-3); }
+  footer.meta p { margin: .5rem 0; }
+  /* the three downloads are one row of their own, not a tail on the source line.
+     Scoped under footer.meta so these outrank the `footer.meta p` above. */
+  footer.meta .dlrow { display: flex; flex-wrap: wrap; gap: .4rem; margin: .75rem 0 .6rem; }
+  footer.meta .totop { margin-top: 1.1rem; }
   a { color: var(--blue-ink); }
 
   @media (prefers-reduced-motion: reduce) {
@@ -240,7 +261,7 @@
   }
 </style>
 
-<div class="wrap">
+<div class="wrap" id="top">
   <header class="masthead">
     <!-- The window describes the dates recorded in the export, not the survey's
          announced open/close: the Division labels this same file "May 12-June 7",
@@ -251,13 +272,14 @@
       Search what people wrote in the division's redistricting survey. Type a word in the box to
       see each response that uses it, and use the filters to narrow to a group of respondents, a
       school, or one of the five questions. Click a day on the response timeline — or drag across
-      several — to keep only the responses from those days. The three tabs switch between reading
-      full responses, listing every mention of your search word in context, and counting the
-      words people used.
+      several — to keep only the responses from those days.
     </p>
     <p class="standnote">
       1,374 of the survey's 1,540 respondents wrote something in at least one of the five
       free-text questions, and those are the responses you can read here.
+    </p>
+    <p class="jumps">
+      <a href="#how-it-works">How this works</a> · <a href="#downloads">Download the data</a>
     </p>
   </header>
 
@@ -293,24 +315,17 @@
         </span>
       </div>
 
-      <div class="fgroup">
-        <span class="flabel">Responded</span>
+      <div class="fgroup fgroup-date">
+        <span class="flabel dlabel">Date responded<button type="button" class="tl-clear" id="date-clear" aria-label="Clear dates" hidden>Clear</button></span>
         <div class="tl" id="f-date"></div>
-        <button type="button" class="tl-clear" id="date-clear" hidden>Clear dates</button>
       </div>
-    </div>
-
-    <div class="tabs" role="tablist">
-      <button class="tab" role="tab" id="tab-comments" aria-selected="true">Responses</button>
-      <button class="tab" role="tab" id="tab-kwic" aria-selected="false">Every mention</button>
-      <button class="tab" role="tab" id="tab-words" aria-selected="false">Word counts</button>
     </div>
   </div>
 
   <p class="status" id="status">Loading…</p>
   <div id="view"></div>
 
-  <details class="method">
+  <details class="method" id="how-it-works">
     <summary>How this works</summary>
     <p>
       <strong>This tool was built with AI assistance.</strong> The page, the pipeline that
@@ -333,8 +348,8 @@
       <code>mas</code>). It also matches inside words — <code>bus</code> hits
       <code>buses</code> and <code>business</code> — so a longer search word is a narrower one.
       There is no stemming, no synonyms, no relevance ranking, and no AI:
-      the same query always returns the same rows, in survey order, and "Every mention"
-      shows all of them so you can count them yourself.
+      the same query always returns the same rows, in survey order, so you can count
+      them yourself.
     </p>
     <p>
       <strong>Who answered.</strong> This was an open, self-selected survey, not a
@@ -344,18 +359,23 @@
     </p>
   </details>
 
-  <footer class="meta">
+  <footer class="meta" id="downloads">
     <p>
       Source: <em>Redacted Redistricting Survey Raw Results</em>, Williamsburg–James City County
       Schools, June 2026 (3,106 pages).
+    </p>
+    <p class="dlrow">
       <button id="dl-csv">Download CSV</button>
       <button id="dl-json">Download JSON</button>
       <a class="btn"
          href="https://wjccschools.org/wp-content/uploads/2026/06/Redacted-Redistricting-Survey-Raw-Results-Final-June-2026.pdf"
          target="_blank" rel="noopener">Download PDF</a>
-      — CSV and JSON reflect the filters currently applied; the PDF is the Division's
+    </p>
+    <p>
+      CSV and JSON reflect the filters currently applied; the PDF is the Division's
       complete original.
     </p>
+    <p class="totop"><a href="#top">↑ Back to top</a></p>
   </footer>
 </div>
 
@@ -399,7 +419,7 @@
   // roles is multi-select (empty array = no filter); the three dropdowns are
   // single-select; from/to is an inclusive ISO date range, null when unset.
   var state = { q: "", roles: [], school: "", support: "", field: "",
-                from: null, to: null, tab: "comments", limit: 40 };
+                from: null, to: null, limit: 40 };
 
   var el = {
     q: document.getElementById("q"),
@@ -411,12 +431,7 @@
     field: document.getElementById("f-field"),
     reset: document.getElementById("reset"),
     status: document.getElementById("status"),
-    view: document.getElementById("view"),
-    tabs: {
-      comments: document.getElementById("tab-comments"),
-      kwic: document.getElementById("tab-kwic"),
-      words: document.getElementById("tab-words")
-    }
+    view: document.getElementById("view")
   };
 
   function opt(select, value, label) {
@@ -728,123 +743,6 @@
     }
   }
 
-  function renderKwic(sel) {
-    var len = state.q.trim().length;
-    if (!len) {
-      el.view.appendChild(E("p", "empty", "Type a word above to see every place it appears."));
-      return;
-    }
-    var rows = [];
-    sel.forEach(function (item) {
-      activeFields().forEach(function (f) {
-        var offsets = item.hits && item.hits[f.key];
-        if (!offsets) return;
-        var text = item.row.t[f.key];
-        offsets.forEach(function (i) {
-          rows.push({ id: item.row.id, label: f.label, text: text, at: i });
-        });
-      });
-    });
-
-    var cap = 400;
-    var table = E("table");
-    var thead = E("thead"), htr = E("tr");
-    ["Response", "Question", "In context"].forEach(function (h) { htr.appendChild(E("th", null, h)); });
-    thead.appendChild(htr);
-    table.appendChild(thead);
-
-    var tbody = E("tbody");
-    rows.slice(0, cap).forEach(function (h) {
-      var tr = E("tr");
-      var td1 = E("td");
-      var a = E("a", "rid", h.id);
-      a.href = "#" + h.id;
-      a.addEventListener("click", function () { setTab("comments"); });
-      td1.appendChild(a);
-      tr.appendChild(td1);
-      tr.appendChild(E("td", null, h.label));
-
-      var td3 = E("td", "kwic");
-      var from = Math.max(0, h.at - 70), to = Math.min(h.text.length, h.at + len + 70);
-      td3.appendChild(E("span", "pre", (from > 0 ? "…" : "") + h.text.slice(from, h.at)));
-      td3.appendChild(E("mark", null, h.text.slice(h.at, h.at + len)));
-      td3.appendChild(E("span", "post", h.text.slice(h.at + len, to) + (to < h.text.length ? "…" : "")));
-      tr.appendChild(td3);
-      tbody.appendChild(tr);
-    });
-    table.appendChild(tbody);
-
-    var note = E("p", "status");
-    note.appendChild(E("strong", null, rows.length.toLocaleString()));
-    note.appendChild(document.createTextNode(
-      " mention" + (rows.length === 1 ? "" : "s") + " of “" + state.q.trim() + "” across " +
-      sel.length.toLocaleString() + " response" + (sel.length === 1 ? "" : "s") +
-      (rows.length > cap ? " — first " + cap + " shown." : ".")));
-    el.view.appendChild(note);
-
-    var scroller = E("div", "scroller");
-    scroller.appendChild(table);
-    el.view.appendChild(scroller);
-  }
-
-  var STOP = ("a about after all also am an and any are as at be because been but by can could did do does " +
-    "for from get go had has have he her here him his how i if in into is it its just like make me more most " +
-    "my no not now of on one only or other our out over said same see she should so some such than that the " +
-    "their them then there these they this those through to too under up us very was way we were what when " +
-    "where which who will with would you your it's don't i'm we've they're").split(" ");
-  var STOPSET = STOP.reduce(function (a, w) { a[w] = 1; return a; }, {});
-
-  function renderWords(sel) {
-    var counts = {}, docs = {};
-    sel.forEach(function (item) {
-      var seen = {};
-      activeFields().forEach(function (f) {
-        var t = item.row._f[f.key];
-        if (!t) return;
-        var words = t.match(/[a-z][a-z']{2,}/g);
-        if (!words) return;
-        words.forEach(function (w) {
-          if (STOPSET[w]) return;
-          counts[w] = (counts[w] || 0) + 1;
-          if (!seen[w]) { seen[w] = 1; docs[w] = (docs[w] || 0) + 1; }
-        });
-      });
-    });
-
-    var list = Object.keys(counts).map(function (w) { return [w, counts[w], docs[w]]; });
-    list.sort(function (a, b) { return b[2] - a[2] || b[1] - a[1] || a[0].localeCompare(b[0]); });
-
-    el.view.appendChild(E("p", "status",
-      "Every word used in " + sel.length.toLocaleString() + " responses, minus " + STOP.length +
-      " common English words. Click a row to read the mentions."));
-
-    var table = E("table");
-    var thead = E("thead"), htr = E("tr");
-    ["Word", "Responses using it", "Total uses"].forEach(function (h, i) {
-      var th = E("th", i ? "num" : null, h);
-      htr.appendChild(th);
-    });
-    thead.appendChild(htr);
-    table.appendChild(thead);
-
-    var tbody = E("tbody");
-    list.slice(0, 250).forEach(function (w) {
-      var tr = E("tr", "wordrow");
-      tr.tabIndex = 0;
-      tr.appendChild(E("td", "word", w[0]));
-      tr.appendChild(E("td", "num", w[2].toLocaleString()));
-      tr.appendChild(E("td", "num", w[1].toLocaleString()));
-      function go() { el.q.value = w[0]; state.q = w[0]; state.limit = 40; setTab("kwic"); }
-      tr.addEventListener("click", go);
-      tr.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
-      tbody.appendChild(tr);
-    });
-    table.appendChild(tbody);
-    var scroller = E("div", "scroller");
-    scroller.appendChild(table);
-    el.view.appendChild(scroller);
-  }
-
   // ---- main render ------------------------------------------------------
   var current = [];
 
@@ -881,17 +779,7 @@
       el.view.appendChild(E("p", "empty", "No responses match. Try a shorter word, or reset the filters."));
       return;
     }
-    if (state.tab === "comments") renderComments(current);
-    else if (state.tab === "kwic") renderKwic(current);
-    else renderWords(current);
-  }
-
-  function setTab(name) {
-    state.tab = name;
-    Object.keys(el.tabs).forEach(function (k) {
-      el.tabs[k].setAttribute("aria-selected", String(k === name));
-    });
-    render();
+    renderComments(current);
   }
 
   // ---- events -----------------------------------------------------------
@@ -910,14 +798,11 @@
   });
   el.reset.addEventListener("click", function () {
     state = { q: "", roles: [], school: "", support: "", field: "",
-              from: null, to: null, tab: state.tab, limit: 40 };
+              from: null, to: null, limit: 40 };
     el.q.value = "";
     el.school.value = ""; el.field.value = ""; el.support.value = "";
     roleBubbles.forEach(function (b) { b.input.checked = false; });
     render();
-  });
-  Object.keys(el.tabs).forEach(function (k) {
-    el.tabs[k].addEventListener("click", function () { setTab(k); });
   });
 
   // ---- downloads (current selection) ------------------------------------
@@ -964,6 +849,13 @@
   // ---- deep link --------------------------------------------------------
   function jumpToHash() {
     var id = location.hash.replace("#", "");
+    if (id === "how-it-works" || id === "downloads") {
+      var t = document.getElementById(id);
+      if (!t) return;
+      if (t.tagName === "DETAILS") t.open = true;
+      t.scrollIntoView();
+      return;
+    }
     if (!/^r\d{4}$/.test(id)) return;
     var i = ROWS.findIndex(function (r) { return r.id === id; });
     if (i < 0) return;
@@ -975,5 +867,20 @@
   render();
   jumpToHash();
   window.addEventListener("hashchange", jumpToHash);
+})();
+</script>
+
+<script>
+// "How this works" is a closed <details>; a fragment landing ON one does not open it.
+(function () {
+  var d = document.getElementById("how-it-works");
+  if (!d) return;
+  function openIfTargeted() { if (location.hash === "#how-it-works") d.open = true; }
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (t && t.closest && t.closest('a[href="#how-it-works"]')) d.open = true;
+  });
+  window.addEventListener("hashchange", openIfTargeted);
+  openIfTargeted();
 })();
 </script>

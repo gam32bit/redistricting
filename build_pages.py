@@ -32,6 +32,7 @@ DESC = ("Search all 1,374 written responses to the Williamsburg-James City Count
 # wrong one.
 BASE_URL = "https://gam32bit.github.io/redistricting/"
 BACK_LINK = "https://jwcaterine.com/"
+SUBSTACK_LINK = "https://jwcaterine.substack.com/"
 
 html = open(SRC, encoding="utf-8").read()
 
@@ -91,7 +92,11 @@ if BASE_URL:
              f'<meta property="og:url" content="{BASE_URL}">']
 head += ['</head>', '<body>']
 
-BACK = (f'<p style="max-width:60rem;margin:0 auto;padding:1rem 1.25rem 0;font-size:.85rem">'
+# Two destinations, not one trail of breadcrumbs: the arrow belongs only to the
+# site this page sits under.
+BACK = (f'<p style="max-width:60rem;margin:0 auto;padding:1rem 1.25rem 0;'
+        f'font-size:.85rem;line-height:1.7">'
+        f'<a href="{SUBSTACK_LINK}">jwcaterine.substack.com</a><br>'
         f'<a href="{BACK_LINK}">← jwcaterine.com</a></p>\n')
 
 doc = "\n".join(head) + "\n" + BACK + html + "</body>\n</html>\n"
