@@ -1,4 +1,4 @@
-<title>Search Redistricting Survey Results</title>
+<title>Explore WJCC Redistricting Survey Responses</title>
 
 <style>
   :root {
@@ -178,15 +178,12 @@
     border-right: 1.5px solid var(--ink-3); border-bottom: 1.5px solid var(--ink-3);
     transform: rotate(45deg);
   }
-  button, a.btn {
+  button {
     font: inherit; font-size: .85rem; padding: .38rem .7rem; cursor: pointer;
     border: 1px solid var(--rule-2); border-radius: 6px;
     background: var(--surface); color: var(--ink);
   }
-  /* the PDF link wears the same chrome as the two blob-download buttons */
-  a.btn { display: inline-block; text-decoration: none; }
-  button:hover, a.btn:hover { border-color: var(--ink-3); }
-  a.btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  button:hover { border-color: var(--ink-3); }
   button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
   :root[data-theme="dark"] button.primary, :root:where(:not([data-theme="light"])) button.primary { color: #0d0d0a; }
   @media (prefers-color-scheme: light) { :root:where(:not([data-theme="dark"])) button.primary { color: #fff; } }
@@ -234,25 +231,18 @@
   .more { display: block; width: 100%; margin: .5rem 0 2rem; padding: .6rem; }
 
   .jumps { margin: .8rem 0 0; font-size: .85rem; color: var(--ink-3); }
-  /* .controls is sticky and ~226px tall when stuck; land clear of it, not behind it.
-     Both targets sit near the document end, so an overshoot just clamps. */
-  #how-it-works, #downloads { scroll-margin-top: 15rem; }
   /* "Back to top" means the top: .wrap starts below the page padding, and below the
      site nav build_pages.py prepends, so overshoot and let the scroll clamp at 0. */
-  #top { scroll-margin-top: 6rem; }
+  #top, #how-it-works { scroll-margin-top: 6rem; }
 
   details.method {
-    margin-top: 2.5rem; border-top: 1px solid var(--rule); padding-top: 1rem;
-    font-size: .85rem; color: var(--ink-2);
+    margin-top: 1.1rem; font-size: .85rem; color: var(--ink-2);
   }
   details.method summary { cursor: pointer; font-weight: 600; color: var(--ink); }
   details.method p, details.method li { max-width: 46rem; }
   code { font-family: var(--mono); font-size: .85em; background: var(--chip); padding: .1em .35em; border-radius: 3px; }
   footer.meta { margin-top: 1.5rem; font-size: .8rem; color: var(--ink-3); }
   footer.meta p { margin: .5rem 0; }
-  /* the three downloads are one row of their own, not a tail on the source line.
-     Scoped under footer.meta so these outrank the `footer.meta p` above. */
-  footer.meta .dlrow { display: flex; flex-wrap: wrap; gap: .4rem; margin: .75rem 0 .6rem; }
   footer.meta .totop { margin-top: 1.1rem; }
   a { color: var(--blue-ink); }
 
@@ -267,9 +257,10 @@
          announced open/close: the Division labels this same file "May 12-June 7",
          and the export carries no times to reconcile the two. See OPTION-C.md. -->
     <p class="kicker">WJCC Schools redistricting survey · responses recorded 13 May – 8 June 2026</p>
-    <h1>Search Redistricting Survey Results</h1>
+    <h1>Explore WJCC Redistricting Survey Responses</h1>
     <p class="standfirst">
-      Search what people wrote in the division's redistricting survey. Type a word in the box to
+      Search what people wrote in the Williamsburg-James City County school division's
+      redistricting survey conducted from May 12 to June 7, 2026. Type a word in the box to
       see each response that uses it, and use the filters to narrow to a group of respondents, a
       school, or one of the five questions. Click a day on the response timeline — or drag across
       several — to keep only the responses from those days.
@@ -278,8 +269,23 @@
       1,374 of the survey's 1,540 respondents wrote something in at least one of the five
       free-text questions, and those are the responses you can read here.
     </p>
+    <details class="method" id="how-it-works">
+      <summary>How this page was built</summary>
+      <p>
+        <strong>This page was built with AI assistance.</strong> You can read my blog post for
+        a full explainer of how I used Claude Code for this project. AI can make mistakes. I
+        designed this page so that none of it depends on AI interpretation of the text or data.
+        All the responses are lifted verbatim from the Division's PDF by a traditional coding
+        script. Readers can verify by downloading the source PDF.
+      </p>
+    </details>
+
     <p class="jumps">
-      <a href="#how-it-works">How this works</a> · <a href="#downloads">Download the data</a>
+      Download the data:
+      <a href="#" id="dl-csv">CSV</a> ·
+      <a href="#" id="dl-json">JSON</a> ·
+      <a href="https://wjccschools.org/wp-content/uploads/2026/06/Redacted-Redistricting-Survey-Raw-Results-Final-June-2026.pdf"
+         target="_blank" rel="noopener">Source PDF</a>
     </p>
   </header>
 
@@ -325,55 +331,10 @@
   <p class="status" id="status">Loading…</p>
   <div id="view"></div>
 
-  <details class="method" id="how-it-works">
-    <summary>How this works</summary>
-    <p>
-      <strong>This tool was built with AI assistance.</strong> The page, the pipeline that
-      produced its data, and some of the wording you're reading were developed with help from
-      Claude Code. AI can make mistakes, so nothing here depends on it having read or interpreted
-      the survey. Every response shown is lifted verbatim from the Division's published PDF by
-      script — nothing is hand-entered, and no comment is summarized, paraphrased or ranked.
-      One real extraction fault was found and fixed: the PDF's embedded font maps
-      <code>f</code>, <code>ff</code>, <code>fi</code> and <code>fl</code> to unused codepoints,
-      so every extractor silently drops them, turning "Lafayette" into "La ayette." Those glyphs
-      are restored from an explicit replacement map, and the text was checked to leave no unmapped
-      codepoints behind. The export's duplicated question groups — where the Division's file
-      repeats one answer under several questions — were detected and collapsed rather than counted
-      twice. Where it matters, check any response against the source PDF linked at the foot of
-      this page; it is the authority, not this page.
-    </p>
-    <p>
-      <strong>Search is literal.</strong> Typing <code>bus</code> finds the exact letters
-      <code>b-u-s</code>, case-insensitively, with accents folded (<code>Más</code> matches
-      <code>mas</code>). It also matches inside words — <code>bus</code> hits
-      <code>buses</code> and <code>business</code> — so a longer search word is a narrower one.
-      There is no stemming, no synonyms, no relevance ranking, and no AI:
-      the same query always returns the same rows, in survey order, so you can count
-      them yourself.
-    </p>
-    <p>
-      <strong>Who answered.</strong> This was an open, self-selected survey, not a
-      representative sample. The survey's intake form did not require participants to verify
-      that they live within WJCC, and nothing prevented the same person from completing the
-      survey more than once.
-    </p>
-  </details>
-
-  <footer class="meta" id="downloads">
+  <footer class="meta">
     <p>
       Source: <em>Redacted Redistricting Survey Raw Results</em>, Williamsburg–James City County
       Schools, June 2026 (3,106 pages).
-    </p>
-    <p class="dlrow">
-      <button id="dl-csv">Download CSV</button>
-      <button id="dl-json">Download JSON</button>
-      <a class="btn"
-         href="https://wjccschools.org/wp-content/uploads/2026/06/Redacted-Redistricting-Survey-Raw-Results-Final-June-2026.pdf"
-         target="_blank" rel="noopener">Download PDF</a>
-    </p>
-    <p>
-      CSV and JSON reflect the filters currently applied; the PDF is the Division's
-      complete original.
     </p>
     <p class="totop"><a href="#top">↑ Back to top</a></p>
   </footer>
@@ -817,7 +778,8 @@
   }
   function csvCell(v) { return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; }
 
-  document.getElementById("dl-csv").addEventListener("click", function () {
+  document.getElementById("dl-csv").addEventListener("click", function (ev) {
+    ev.preventDefault();
     var head = ["id", "date", "roles", "schools", "support", "priorities", "objectives"]
       .concat(FIELDS.map(function (f) { return f.key; }));
     var lines = [head.map(csvCell).join(",")];
@@ -835,7 +797,8 @@
     download("wjcc-survey-comments.csv", "text/csv", lines.join("\n"));
   });
 
-  document.getElementById("dl-json").addEventListener("click", function () {
+  document.getElementById("dl-json").addEventListener("click", function (ev) {
+    ev.preventDefault();
     download("wjcc-survey-comments.json", "application/json", JSON.stringify({
       meta: DATA.meta, vocab: VOCAB, support: SUPPORT, fields: FIELDS,
       rows: current.map(function (i) {
@@ -849,7 +812,7 @@
   // ---- deep link --------------------------------------------------------
   function jumpToHash() {
     var id = location.hash.replace("#", "");
-    if (id === "how-it-works" || id === "downloads") {
+    if (id === "how-it-works") {
       var t = document.getElementById(id);
       if (!t) return;
       if (t.tagName === "DETAILS") t.open = true;
