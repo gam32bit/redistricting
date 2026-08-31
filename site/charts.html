@@ -90,10 +90,6 @@
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 10px; padding: 26px 26px 18px; margin: 0 0 26px;
   }
-  .kicker {
-    font-size: 11.5px; font-weight: 600; letter-spacing: .13em;
-    text-transform: uppercase; color: var(--muted); margin: 0 0 8px;
-  }
   h2 {
     font-family: Georgia, "Times New Roman", serif;
     font-size: 23px; font-weight: 700; line-height: 1.25;
@@ -127,7 +123,7 @@
     fill: var(--ink2);
   }
   text.t-muted { fill: var(--muted); }
-  text.t-ink { fill: var(--ink); font-weight: 600; }
+  .t-ink { fill: var(--ink); font-weight: 700; }
   text.t-num { font-variant-numeric: tabular-nums; }
   line.gridline { stroke: var(--grid); stroke-width: 1; }
   line.axisline { stroke: var(--axis); stroke-width: 1; }
@@ -273,22 +269,34 @@
     { label: "Final flood · Jun 3–8",     sa: 209, wa: 361, wd: 129, sd: 206 }
   ];
 
+  // The relationship question is check-all-that-apply, so a respondent appears
+  // in every category they selected; the groups overlap and do not sum to 1,470.
   var roles = [
-    { label: "Staff, no child enrolled",     sa: 39,  wa: 44,  wd: 14,  sd: 8   },
-    { label: "Parents",                      sa: 256, wa: 449, wd: 152, sd: 244 },
-    { label: "Community, no child enrolled", sa: 38,  wa: 36,  wd: 27,  sd: 69  },
-    { label: "Other respondents",            sa: 18,  wa: 25,  wd: 18,  sd: 33  }
+    { label: "Staff",              sa: 68,  wa: 99,  wd: 23,  sd: 13  },
+    { label: "Parents",            sa: 256, wa: 449, wd: 152, sd: 244 },
+    { label: "Other stakeholders", sa: 11,  wa: 18,  wd: 7,   sd: 12  },
+    { label: "Community members",  sa: 65,  wa: 93,  wd: 38,  sd: 96  },
+    { label: "Students",           sa: 18,  wa: 26,  wd: 14,  sd: 36  }
   ];
 
+  // Bar labels are the survey option's own header; the third element is the
+  // option's full text as it appears in the export, shown in the table twin.
   var priorities = [
-    ["Keep neighborhoods together", 732],
-    ["Minimize impact (move fewest students)", 601],
-    ["Demographics & socioeconomics", 469],
-    ["Transportation (bus time, safe stops)", 466],
-    ["Capacity & utilization", 240],
-    ["Natural barriers & major roads", 191],
-    ["Other priority", 155],
-    ["Avoid island zones", 88]
+    ["Neighborhood Considerations", 732,
+     "Neighborhood Considerations– Keep neighborhoods together as much as possible, avoid splitting down the middle of the street."],
+    ["Minimize Impact", 601,
+     "Minimize Impact – Move the fewest number of students to accomplish the boundary adjustment, set long term boundaries (10-12 years) accounting for known enrollment variations"],
+    ["Demographics", 469,
+     "Demographics - Consider racial and ethnic diversity as well as socio-economic indicators within schools."],
+    ["Transportation", 466,
+     "Transportation – Minimize time on bus, logical safe stops for group pickups, efficiency with time and dollars"],
+    ["Capacity & Utilization", 240,
+     "Capacity & Utilization – Optimizing the use of school facilities to match current and projected enrollment balancing utilization at the current, 5-year, and 10-year forecasted trends."],
+    ["Natural Barriers & Major Roads", 191,
+     "Natural Barriers & Major Roads - Use natural barriers and major roads to create efficiency in setting boundaries and keeping neighborhoods together."],
+    ["Other boundary priority", 155, "Other boundary priority"],
+    ["Island Zones", 88,
+     "Island Zones - consider known enrollment variations and population projections in setting boundaries, avoid current and future islands"]
   ]; // base 1466, choose up to 2
 
   var objectives = [
@@ -432,8 +440,6 @@
   function card(num, title, sub, opts) {
     var s = document.createElement("section");
     s.className = "card";
-    var k = document.createElement("p"); k.className = "kicker";
-    k.textContent = "Chart " + num + " of 10"; s.appendChild(k);
     var h = document.createElement("h2"); h.textContent = title; s.appendChild(h);
     if (sub) {
       var p = document.createElement("p"); p.className = "sub"; p.textContent = sub;
@@ -472,7 +478,9 @@
     });
     section.appendChild(p);
   }
-  function tableTwin(section, headers, rows) {
+  // textCols: column indices that hold prose, so they stay left-aligned
+  function tableTwin(section, headers, rows, textCols) {
+    var isNum = function (i) { return i > 0 && (!textCols || textCols.indexOf(i) < 0); };
     var d = document.createElement("details"); d.className = "tbl";
     var sm = document.createElement("summary"); sm.textContent = "Data table"; d.appendChild(sm);
     var wrap = document.createElement("div"); wrap.className = "tblscroll";
@@ -480,7 +488,7 @@
     var tr = document.createElement("tr");
     headers.forEach(function (htext, i) {
       var th = document.createElement("th");
-      if (i > 0) th.className = "num";
+      if (isNum(i)) th.className = "num";
       th.textContent = htext; tr.appendChild(th);
     });
     t.appendChild(tr);
@@ -488,7 +496,7 @@
       var trr = document.createElement("tr");
       row.forEach(function (cell, i) {
         var td = document.createElement("td");
-        if (i > 0) td.className = "num";
+        if (isNum(i)) td.className = "num";
         td.textContent = cell; trr.appendChild(td);
       });
       t.appendChild(trr);
@@ -774,13 +782,13 @@
       r.sortKey = (r.sa + r.wa) / n;
     });
     rows.sort(function (a, b) { return b.sortKey - a.sortKey; });
-    var c = card(2, "Your school predicts what you think", "",
+    var c = card(2, "Position on Redistricting by School Affiliation", "",
       { legend: divergingLegend });
     divergingRows(c, rows, {
       gutter: 196, boldEnds: true,
       aria: "Diverging stacked bar chart of redistricting support by school community."
     });
-    note(c.section, "Number after each school is total number of respondents who selected that school. The larger that number, the more reliably the percentages describe that school's community; the smallest groups here rest on fewer than 40 answers. **Respondents who selected multiple schools count toward each one.**");
+    note(c.section, "Number after each school is total number of respondents who selected that school. **Respondents who selected multiple schools count toward each one.**");
     divergingTable(c.section, rows, "School community");
   })();
 
@@ -827,34 +835,30 @@
       copy.count = r.sa + r.wa + r.wd + r.sd;
       return copy;
     });
-    var c = card(5,
-      "Staff back the plan four-to-one; community members lean against it",
-      "Support by the respondent's relationship to WJCC Schools. Staff with no child enrolled " +
-      "agree 79% to 21%. Parents — three-quarters of everyone who responded — agree 64% to 36%. " +
-      "Residents with no child in the schools are the only group where opposition wins, 56% to 44%.",
+    var c = card(5, "Position on Redistricting by Respondent Category", "",
       { legend: divergingLegend });
     divergingRows(c, rows, {
-      gutter: 226, boldEnds: true,
-      aria: "Diverging stacked bar chart of redistricting support by respondent role."
+      gutter: 200, boldEnds: true,
+      aria: "Diverging stacked bar chart of redistricting support by respondent category."
     });
-    note(c.section, "Respondents could check several relationships, so each is placed in one group only — parent first, then staff, then community member. Counted the other way, all 203 staff who answered (including the 98 who are also parents) agree 82% to 18%. Number after each group is respondents answering.");
+    note(c.section, "Number after each category is respondents answering. **Respondents could check several relationships and are counted in every category they selected.**");
     divergingTable(c.section, roles, "Respondent group");
   })();
 
   /* ---------------- Chart 6 ---------------- */
   (function () {
     var c = card(6,
-      "“Keep neighborhoods together” is the boundary priority, by a distance",
-      "“Which priorities do you consider most important in the development of new school " +
-      "boundaries?” Eight options, up to two picks; shares are of the 1,466 who answered. Half " +
-      "named neighborhood cohesion — the very thing critics say the draft maps break.");
+      "“Which priorities do you consider most important in the development of new school boundaries?”",
+      "A multiple-choice question with eight options and up to two picks. The form did not enforce " +
+      "that cap: 18 respondents recorded three or four picks (11 with three, 7 with four).");
     hbars(c, priorities, {
-      gutter: 300, base: 1466, tipLabel: "chose this priority",
+      gutter: 240, base: 1466, tipLabel: "chose this priority",
       aria: "Bar chart of boundary priorities chosen by respondents."
     });
-    note(c.section, "Shares add to more than 100% because most respondents picked two. The form did not enforce its own cap: 18 people recorded three or four picks, which is why the bars total 2,942 rather than 2,932.");
-    tableTwin(c.section, ["Priority", "Chose it", "Share of answered"],
-      priorities.map(function (it) { return [it[0], comma(it[1]), pct(it[1], 1466)]; }));
+    note(c.section, "Shares add to more than 100% because most respondents picked two. Bar labels are each option's header; the full option text is in the table below.");
+    tableTwin(c.section, ["Priority", "Chose it", "Share of answered", "Full option text"],
+      priorities.map(function (it) { return [it[0], comma(it[1]), pct(it[1], 1466), it[2]]; }),
+      [3]);
   })();
 
   /* ---------------- Chart 7 ---------------- */
