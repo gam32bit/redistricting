@@ -138,6 +138,8 @@
     background: var(--surface); color: var(--ink-2);
   }
   .bub:hover { border-color: var(--ink-3); color: var(--ink); }
+  /* inherits currentColor so it stays legible when the chip inverts on check */
+  .bcount { opacity: .6; font-variant-numeric: tabular-nums; }
   .bubin:checked + .bub {
     background: var(--ink); border-color: var(--ink); color: var(--bg); font-weight: 500;
   }
@@ -171,6 +173,11 @@
   .tl-axis span {
     position: absolute; top: 0; white-space: nowrap;
     font-size: .7rem; color: var(--ink-3); font-variant-numeric: tabular-nums;
+  }
+  /* the bars rescale to the filtered peak, so the peak has to be stated */
+  .tl-peak {
+    font-size: .65rem; font-weight: 400; letter-spacing: 0; text-transform: none;
+    color: var(--ink-3); font-variant-numeric: tabular-nums;
   }
   .tl-clear {
     font-size: .7rem; padding: .1rem .4rem; color: var(--ink-2);
@@ -336,7 +343,7 @@
       </div>
 
       <div class="fgroup fgroup-date">
-        <span class="flabel dlabel">Date responded<button type="button" class="tl-clear" id="date-clear" aria-label="Clear dates" hidden>Clear</button></span>
+        <span class="flabel dlabel">Date responded<span class="tl-peak" id="tl-peak"></span><button type="button" class="tl-clear" id="date-clear" aria-label="Clear dates" hidden>Clear</button></span>
         <div class="tl" id="f-date"></div>
       </div>
     </div>
@@ -408,6 +415,7 @@
     q: document.getElementById("q"),
     role: document.getElementById("f-role"),
     dateClear: document.getElementById("date-clear"),
+    datePeak: document.getElementById("tl-peak"),
     school: document.getElementById("f-school"),
     support: document.getElementById("f-support"),
     date: document.getElementById("f-date"),
@@ -451,10 +459,13 @@
       var label = document.createElement("label");
       label.className = "bub"; label.htmlFor = id;
       label.appendChild(document.createTextNode(it.label));
+      var count = document.createElement("span");
+      count.className = "bcount";
+      label.appendChild(count);
       if (it.title) label.title = it.title;
       container.appendChild(input);
       container.appendChild(label);
-      made.push({ input: input, label: label, key: it.value });
+      made.push({ input: input, label: label, key: it.value, count: count });
     });
     return made;
   }
@@ -480,18 +491,20 @@
 
   // Returns matching rows; when a query is present each row carries the
   // per-field match offsets that produced it.
-  function select() {
+  function select(opts) {
+    var skipRoles = opts && opts.skipRoles;
+    var skipDate = opts && opts.skipDate;
     var needle = fold(state.q.trim());
     var fields = activeFields();
     var out = [];
 
     for (var i = 0; i < ROWS.length; i++) {
       var r = ROWS[i];
-      if (state.roles.length && !anyOf(r.r, state.roles)) continue;
+      if (!skipRoles && state.roles.length && !anyOf(r.r, state.roles)) continue;
       if (state.school !== "" && r.s.indexOf(+state.school) === -1) continue;
       if (state.support !== "" && r.z !== +state.support) continue;
       // ISO dates compare as plain strings, so the range test needs no parsing
-      if (state.from && (r.d < state.from || r.d > state.to)) continue;
+      if (!skipDate && state.from && (r.d < state.from || r.d > state.to)) continue;
 
       var hits = null, total = 0;
       if (needle) {
@@ -535,17 +548,14 @@
   track.setAttribute("aria-label",
     "Filter by response date. Click a day or drag across days; arrow keys move, " +
     "shift with an arrow key extends the range, Escape clears.");
-  var maxDay = DAYS.reduce(function (m, d) { return Math.max(m, DAYN[d]); }, 0);
+  // Heights and tooltips are painted, not baked -- see paintDays().
+  var dayBars = [];
   var dayCells = DAYS.map(function (d) {
     var cell = E("div", "tl-day");
-    cell.title = dayLabel(d) + " · " + DAYN[d].toLocaleString() +
-      " response" + (DAYN[d] === 1 ? "" : "s") + " with written answers";
     var bar = E("i", "tl-bar");
-    // linear, so June 5's spike reads at its true size; the floor only keeps
-    // the quietest days visible enough to aim at
-    bar.style.height = Math.max(8, Math.round(100 * DAYN[d] / maxDay)) + "%";
     cell.appendChild(bar);
     track.appendChild(cell);
+    dayBars.push(bar);
     return cell;
   });
   var axis = E("div", "tl-axis");
@@ -567,13 +577,37 @@
   var dragging = false;
   var undoOnUp = false;  // this press landed on the lone selected day
 
+  // Per-day counts under every filter EXCEPT the date range itself. Counting
+  // with the range on would flatten every unselected day to zero, leaving
+  // nothing to aim the next click at; excluding it also keeps the bars still
+  // under the pointer mid-drag instead of rescaling on each frame.
+  var dayNow = DAYN;
+  function countDays(base) {
+    var n = {};
+    DAYS.forEach(function (d) { n[d] = 0; });
+    base.forEach(function (item) { if (item.row.d && n[item.row.d] != null) n[item.row.d]++; });
+    dayNow = n;
+  }
+  // Takes no argument: it is wired directly as a focus/blur handler.
   function paintDays() {
     var lo = state.from ? DAYS.indexOf(state.from) : -1;
     var hi = state.to ? DAYS.indexOf(state.to) : -1;
+    var maxDay = DAYS.reduce(function (m, d) { return Math.max(m, dayNow[d]); }, 0);
     dayCells.forEach(function (cell, i) {
+      var d = DAYS[i], n = dayNow[d];
+      // Linear, so June 5's spike reads at its true size, and rescaled to the
+      // filtered peak so the shape stays legible when a narrow filter is on --
+      // which is why the peak is spelled out beside the label. The floor keeps
+      // the quietest matching days aimable; a day with no matches gets no bar,
+      // since a stub there would read as data.
+      dayBars[i].style.height = n && maxDay
+        ? Math.max(8, Math.round(100 * n / maxDay)) + "%" : "0";
+      cell.title = dayLabel(d) + " · " + n.toLocaleString() +
+        " matching response" + (n === 1 ? "" : "s");
       cell.classList.toggle("sel", lo >= 0 && i >= lo && i <= hi);
       cell.classList.toggle("cur", document.activeElement === track && i === cursor);
     });
+    el.datePeak.textContent = maxDay ? "peak " + maxDay.toLocaleString() + "/day" : "";
     el.dateClear.hidden = !state.from;
   }
   function setRange(a, b) {
@@ -753,8 +787,37 @@
     el.status.appendChild(document.createTextNode("."));
   }
 
+  // Facet counts: every filter EXCEPT the role bubbles themselves. Counting with
+  // the role filter on would zero every unselected chip the moment one is picked,
+  // which reads as a bug. With two roles checked the chips won't sum to the result
+  // count -- a respondent can hold more than one role, and the filter is OR.
+  function paintRoleCounts(base) {
+    var n = roleBubbles.map(function () { return 0; });
+    base.forEach(function (item) {
+      item.row.r.forEach(function (i) { if (n[i] != null) n[i]++; });
+    });
+    roleBubbles.forEach(function (b, i) {
+      b.count.textContent = n[i].toLocaleString();
+      // The chip's own text is a short label plus a bare number ("Staff 196");
+      // spell it out for screen readers, using the full role name.
+      b.input.setAttribute("aria-label",
+        VOCAB.role[+b.key] + ", " + n[i].toLocaleString() +
+        " response" + (n[i] === 1 ? "" : "s"));
+      // dimmed, never disabled: a checked chip can fall to zero and must stay
+      // clickable so it can be unchecked
+      b.label.style.opacity = n[i] ? "" : ".55";
+    });
+  }
+
   function render() {
-    current = select();
+    // Three different views of the same filters: the chip counts leave the role
+    // filter out, the bars leave the date range out, the results apply both.
+    var roleBase = select({ skipRoles: true });
+    paintRoleCounts(roleBase);
+    countDays(select({ skipDate: true }));
+    current = state.roles.length
+      ? roleBase.filter(function (item) { return anyOf(item.row.r, state.roles); })
+      : roleBase;
     paintDays();
     describe(current);
     el.view.textContent = "";

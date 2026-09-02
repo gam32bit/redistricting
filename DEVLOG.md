@@ -70,3 +70,33 @@ Also open: the goal is per-chart PNGs rather than a page. Every title, caption a
 note lives in HTML *outside* the `<svg>`, so none of it survives an SVG export —
 that text has to move into the SVG or be dropped. `site/substack/` holds hand-made
 PNGs of charts 1, 2 and 7; the chart 2 one is now stale (retitled, note trimmed).
+
+## 2026-09-02 — Live counts on the explorer's "who answered" chips and date bars
+
+Both readouts are facet counts, and they need *different* bases: the chip counts
+apply every filter except the roles, the bar heights apply every filter except the
+date range. The tempting single-pass version — count roles, then reuse that list for
+the bars — leaves the bars frozen when a role chip is clicked, since that list has
+already had the date filter applied and has had roles stripped. Hence two `select()`
+passes per render. Excluding each control from its own counts is also what stops the
+numbers collapsing to zero the moment you use it, and keeps the bars still under the
+pointer mid-drag instead of rescaling every frame.
+
+The bars rescale to the filtered peak rather than holding the unfiltered scale. Fixed
+scale loses to the existing `Math.max(8, …)` floor: a query matching thirty responses
+against a 356-response peak puts every bar on the floor, so the shape goes unreadable
+exactly when it is most wanted. A ghost silhouette of the unfiltered shape behind the
+solid bars was considered and dropped — the two scales contradict each other visually,
+and the honest fix was cheaper: the peak is now printed under the label, so the y-axis
+is stated rather than implied.
+
+Resolved the last session's blocker: Chrome genuinely cannot reach `python3 -m
+http.server` started through the Bash tool, because the sandbox blocks the listening
+socket — curl from inside the sandbox succeeds while the browser gets a connection
+error, which is what made it look like a Chrome problem. Run the server with the
+sandbox disabled and the extension connects fine. That is how this session's changes
+were verified against `site/explorer.build.html`.
+
+Note that `site/explorer.build.html` served over a bare `http.server` shows mojibake:
+it is a fragment with no `<meta charset>`, and the host normally supplies the head.
+`docs/index.html` is the copy to eyeball if encoding matters.
