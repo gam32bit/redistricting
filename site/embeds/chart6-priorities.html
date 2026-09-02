@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which priorities do you consider most important in new school boundaries</title>
+<style>
+  :root {
+    --page: #f9f9f7;
+    --surface: #fcfcfb;
+    --ink: #0b0b0b;
+    --ink2: #52514e;
+    --muted: #898781;
+    --grid: #e1e0d9;
+    --axis: #c3c2b7;
+    --border: rgba(11,11,11,.10);
+    --blue: #2a78d6;
+    --sa: #1c5cab;  --wa: #86b6ef;  --wd: #f0a49e;  --sd: #c73a39;
+    --deemph: #c9c7c0;
+    --o1: #86b6ef; --o2: #5598e7; --o3: #2a78d6; --o4: #1c5cab; --o5: #104281;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      --page: #0d0d0d;
+      --surface: #1a1a19;
+      --ink: #ffffff;
+      --ink2: #c3c2b7;
+      --muted: #898781;
+      --grid: #2c2c2a;
+      --axis: #383835;
+      --border: rgba(255,255,255,.10);
+      --blue: #3987e5;
+      --sa: #3987e5; --wa: #1d4f86; --wd: #8f4340; --sd: #e66767;
+      --deemph: #4a4a46;
+      --o1: #b7d3f6; --o2: #86b6ef; --o3: #5598e7; --o4: #2a78d6; --o5: #184f95;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --ink: #ffffff;
+    --ink2: #c3c2b7;
+    --muted: #898781;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255,255,255,.10);
+    --blue: #3987e5;
+    --sa: #3987e5; --wa: #1d4f86; --wd: #8f4340; --sd: #e66767;
+    --deemph: #4a4a46;
+    --o1: #b7d3f6; --o2: #86b6ef; --o3: #5598e7; --o4: #2a78d6; --o5: #184f95;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 40px 20px 72px; }
+
+  /* ---------- masthead ---------- */
+  header.mast { padding: 8px 4px 28px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 14px;
+  }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(30px, 5vw, 42px);
+    font-weight: 700; line-height: 1.12; margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .dek { color: var(--ink2); font-size: 17px; max-width: 62ch; margin: 0 0 6px; }
+  .meta { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
+
+  /* ---------- KPI row ---------- */
+  .kpis {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px; margin: 8px 0 36px;
+  }
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 18px 14px;
+  }
+  .kpi .lbl { font-size: 12.5px; color: var(--muted); margin: 0 0 4px; }
+  .kpi .val { font-size: 32px; font-weight: 600; line-height: 1.1; margin: 0; }
+  .kpi .ctx { font-size: 12.5px; color: var(--ink2); margin: 6px 0 0; }
+
+  /* ---------- chart cards ---------- */
+  section.card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 26px 26px 18px; margin: 0 0 26px;
+  }
+  h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 23px; font-weight: 700; line-height: 1.25;
+    margin: 0 0 8px; text-wrap: balance;
+  }
+  /* captions run the width of the chart they sit under — a narrower measure
+     reads as a broken column, not as a considered one */
+  .sub { color: var(--ink2); font-size: 14px; margin: 0 0 16px; }
+  .note { color: var(--muted); font-size: 12.5px; margin: 10px 0 0; }
+  .note strong { color: var(--ink2); font-weight: 600; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0 0 12px; }
+  .key { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink2); }
+  .sw { width: 13px; height: 13px; border-radius: 3px; display: inline-block; flex: none; }
+  .sw.c-sa { background: var(--sa); } .sw.c-wa { background: var(--wa); }
+  .sw.c-wd { background: var(--wd); } .sw.c-sd { background: var(--sd); }
+  .sw.c-blue { background: var(--blue); } .sw.c-deemph { background: var(--deemph); }
+
+  .scroller { overflow-x: auto; }
+  .scroller svg { display: block; min-width: 640px; width: 100%; height: auto; }
+
+  /* svg fills via tokens so theme swaps live */
+  .f-sa { fill: var(--sa); } .f-wa { fill: var(--wa); }
+  .f-wd { fill: var(--wd); } .f-sd { fill: var(--sd); }
+  .f-blue { fill: var(--blue); } .f-deemph { fill: var(--deemph); }
+  .f-o1 { fill: var(--o1); } .f-o2 { fill: var(--o2); } .f-o3 { fill: var(--o3); }
+  .f-o4 { fill: var(--o4); } .f-o5 { fill: var(--o5); }
+
+  svg text {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    fill: var(--ink2);
+  }
+  text.t-muted { fill: var(--muted); }
+  .t-ink { fill: var(--ink); font-weight: 700; }
+  text.t-num { font-variant-numeric: tabular-nums; }
+  line.gridline { stroke: var(--grid); stroke-width: 1; }
+  line.axisline { stroke: var(--axis); stroke-width: 1; }
+
+  .mark { transition: filter .12s ease; }
+  .mark.lift { filter: brightness(1.12); }
+  @media (prefers-reduced-motion: reduce) { .mark { transition: none; } }
+  rect.hit { fill: transparent; cursor: default; }
+  rect.hit:focus { outline: none; stroke: var(--ink); stroke-width: 1.5; }
+  rect.hit:focus:not(:focus-visible) { stroke: none; }
+
+  /* tooltip */
+  #tip {
+    position: fixed; z-index: 10; pointer-events: none; display: none;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 7px; box-shadow: 0 4px 16px rgba(0,0,0,.16);
+    padding: 9px 12px; font-size: 13px; max-width: 260px;
+  }
+  #tip .tt-title { color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+  #tip .tt-row { display: flex; align-items: baseline; gap: 8px; }
+  #tip .tt-key { width: 10px; height: 3px; border-radius: 2px; flex: none; align-self: center; }
+  #tip .tt-val { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  #tip .tt-lbl { color: var(--ink2); }
+
+  /* table twin */
+  details.tbl { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 10px; }
+  details.tbl summary {
+    cursor: pointer; font-size: 13px; color: var(--muted); user-select: none;
+  }
+  details.tbl summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  details.tbl table {
+    border-collapse: collapse; margin-top: 10px; font-size: 13.5px; min-width: 50%;
+  }
+  details.tbl th, details.tbl td {
+    text-align: left; padding: 5px 18px 5px 0; border-bottom: 1px solid var(--grid);
+    vertical-align: top;
+  }
+  details.tbl th { color: var(--muted); font-weight: 600; font-size: 12px;
+    text-transform: uppercase; letter-spacing: .06em; }
+  details.tbl td.num, details.tbl th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .tblscroll { overflow-x: auto; }
+
+  footer.method {
+    margin-top: 40px; padding-top: 22px; border-top: 1px solid var(--axis);
+    color: var(--ink2); font-size: 13.5px; max-width: 72ch;
+  }
+  footer.method h3 {
+    font-family: Georgia, "Times New Roman", serif; font-size: 17px;
+    color: var(--ink); margin: 0 0 10px;
+  }
+  footer.method p { margin: 0 0 10px; }
+</style>
+<style>
+  section.card { margin: 0; }
+  .wrap { padding: 20px; max-width: 920px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="cards"></div>
+</div>
+<div id="tip" role="status" aria-live="polite"></div>
+<script>window.ONLY_CHART = 6;</script>
+<script>
+(function () {
+  "use strict";
+  var NS = "http://www.w3.org/2000/svg";
+  var VW = 800; // viewBox width for every chart
+
+  /* ---------------- data ---------------- */
+  var LIK = [
+    { k: "sa", name: "Strongly agree" },
+    { k: "wa", name: "Somewhat agree" },
+    { k: "wd", name: "Somewhat disagree" },
+    { k: "sd", name: "Strongly disagree" }
+  ];
+
+  var overall = { sa: 351, wa: 554, wd: 211, sd: 354 }; // n answered = 1470
+
+  var schools = [
+    { label: "Matthew Whaley ES",   sa: 16, wa: 56, wd: 8,  sd: 9  },
+    { label: "James River ES",      sa: 11, wa: 17, wd: 2,  sd: 3  },
+    { label: "Clara Byrd Baker ES", sa: 19, wa: 31, wd: 9,  sd: 15 },
+    { label: "D.J. Montague ES",    sa: 16, wa: 38, wd: 20, sd: 27 },
+    { label: "J. Blaine Blayton ES",sa: 8,  wa: 20, wd: 8,  sd: 10 },
+    { label: "Laurel Lane ES",      sa: 16, wa: 31, wd: 8,  sd: 16 },
+    { label: "Matoaka ES",          sa: 20, wa: 25, wd: 6,  sd: 6  },
+    { label: "Norge ES",            sa: 17, wa: 21, wd: 6,  sd: 8  },
+    { label: "Stonehouse ES",       sa: 27, wa: 36, wd: 18, sd: 52 },
+    { label: "Berkeley MS",         sa: 37, wa: 72, wd: 19, sd: 20 },
+    { label: "James Blair MS",      sa: 26, wa: 28, wd: 16, sd: 27 },
+    { label: "Hornsby MS",          sa: 26, wa: 40, wd: 13, sd: 22 },
+    { label: "Toano MS",            sa: 21, wa: 22, wd: 8,  sd: 13 },
+    { label: "Jamestown HS",        sa: 42, wa: 79, wd: 16, sd: 27 },
+    { label: "Lafayette HS",        sa: 37, wa: 79, wd: 40, sd: 82 },
+    { label: "Warhill HS",          sa: 33, wa: 40, wd: 22, sd: 23 },
+    { label: "Bright Beginnings",   sa: 10, wa: 9,  wd: 4,  sd: 6  }
+  ];
+
+  var timeline = [
+    ["May 13", 44], ["May 14", 88], ["May 15", 25], ["May 16", 10], ["May 17", 17],
+    ["May 18", 19], ["May 19", 15], ["May 20", 20], ["May 21", 16], ["May 22", 59],
+    ["May 23", 19], ["May 24", 11], ["May 25", 5],  ["May 26", 10], ["May 27", 14],
+    ["May 28", 15], ["May 29", 4],  ["May 30", 6],  ["May 31", 18], ["Jun 1", 105],
+    ["Jun 2", 86],  ["Jun 3", 144], ["Jun 4", 76],  ["Jun 5", 419], ["Jun 6", 143],
+    ["Jun 7", 133], ["Jun 8", 19]
+  ];
+
+  var periods = [
+    { label: "Opening week · May 13–19",  sa: 61,  wa: 70,  wd: 21,  sd: 50  },
+    { label: "Mid-survey · May 20–31",    sa: 52,  wa: 70,  wd: 24,  sd: 36  },
+    { label: "Opposition wave · Jun 1–2", sa: 29,  wa: 53,  wd: 37,  sd: 62  },
+    { label: "Final flood · Jun 3–8",     sa: 209, wa: 361, wd: 129, sd: 206 }
+  ];
+
+  // The relationship question is check-all-that-apply, so a respondent appears
+  // in every category they selected; the groups overlap and do not sum to 1,470.
+  var roles = [
+    { label: "Staff",              sa: 68,  wa: 99,  wd: 23,  sd: 13  },
+    { label: "Parents",            sa: 256, wa: 449, wd: 152, sd: 244 },
+    { label: "Other stakeholders", sa: 11,  wa: 18,  wd: 7,   sd: 12  },
+    { label: "Community members",  sa: 65,  wa: 93,  wd: 38,  sd: 96  },
+    { label: "Students",           sa: 18,  wa: 26,  wd: 14,  sd: 36  }
+  ];
+
+  // Bar labels are the survey option's own header; the third element is the
+  // option's full text as it appears in the export, shown in the table twin.
+  var priorities = [
+    ["Neighborhood Considerations", 732,
+     "Neighborhood Considerations– Keep neighborhoods together as much as possible, avoid splitting down the middle of the street."],
+    ["Minimize Impact", 601,
+     "Minimize Impact – Move the fewest number of students to accomplish the boundary adjustment, set long term boundaries (10-12 years) accounting for known enrollment variations"],
+    ["Demographics", 469,
+     "Demographics - Consider racial and ethnic diversity as well as socio-economic indicators within schools."],
+    ["Transportation", 466,
+     "Transportation – Minimize time on bus, logical safe stops for group pickups, efficiency with time and dollars"],
+    ["Capacity & Utilization", 240,
+     "Capacity & Utilization – Optimizing the use of school facilities to match current and projected enrollment balancing utilization at the current, 5-year, and 10-year forecasted trends."],
+    ["Natural Barriers & Major Roads", 191,
+     "Natural Barriers & Major Roads - Use natural barriers and major roads to create efficiency in setting boundaries and keeping neighborhoods together."],
+    ["Other boundary priority", 155, "Other boundary priority"],
+    ["Island Zones", 88,
+     "Island Zones - consider known enrollment variations and population projections in setting boundaries, avoid current and future islands"]
+  ]; // base 1466, choose up to 2
+
+  var objectives = [
+    ["Safety and security", 855],
+    ["Enhanced educational opportunities", 793],
+    ["Consistent facilities division-wide", 354],
+    ["Building condition", 226],
+    ["Improved extracurricular activities", 203],
+    ["Building capacity", 202],
+    ["Improved utilization of spaces", 155]
+  ]; // base 1419, choose 2
+
+  // Each row is [label, respondents, in-cluster, the literal string searched].
+  // Counts are plain case-insensitive substring matches over the five free-text
+  // answers, so every one can be reproduced in the comment explorer.
+  var themes = [
+    ["Neighborhoods", 419, false, "neighborhood"],
+    ["Diversity", 261, true, "divers"],
+    ["Keeping groups together", 187, false, "together"],
+    ["Socioeconomics", 182, true, "socio"],
+    ["Buses", 157, false, "bus"],
+    ["Equity", 103, true, "equit"],
+    ["Segregation", 72, true, "segregat"],
+    ["Walkability", 56, false, "walk"],
+    ["Grandfathering", 21, false, "grandfather"],
+    ["Title 1 status", 20, true, "title 1"],
+    ["Transparency", 20, false, "transparen"],
+    ["Property values", 20, false, "property value"]
+  ]; // base 1540 respondents
+
+  var hoods = [
+    ["Ford's Colony", 115, "colony"],
+    ["Norge", 64, "norge"],
+    ["Kingsmill", 56, "kingsmill"],
+    ["Wellington", 33, "wellington"],
+    ["Toano", 24, "toano"],
+    ["Kingspoint", 22, "kingspoint"],
+    ["Grove", 12, "grove"],
+    ["Powhatan", 10, "powhatan"],
+    ["The Meadows", 5, "meadows"]
+  ]; // base 1540 respondents
+
+  var facilities = [
+    ["Excellent", 310, "f-o1"],
+    ["Good", 786, "f-o2"],
+    ["Fair", 276, "f-o3"],
+    ["Poor", 44, "f-o4"],
+    ["Unsatisfactory", 21, "f-o5"]
+  ]; // n answered = 1437
+
+  /* ---------------- helpers ---------------- */
+  function E(tag, attrs, parent) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function TXT(attrs, text, parent) {
+    var n = E("text", attrs, parent);
+    n.textContent = text;
+    return n;
+  }
+  function comma(v) { return v.toLocaleString("en-US"); }
+  function pct(v, base) { return Math.round(100 * v / base) + "%"; }
+
+  // bar with 4px rounded corners only on the data end
+  function barPath(x, y, w, h, end) {
+    var r = Math.min(4, w / 2, h / 2);
+    if (w <= 0 || h <= 0) return "M0 0";
+    if (end === "right")
+      return "M" + x + " " + y + " h" + (w - r) + " a" + r + " " + r + " 0 0 1 " + r + " " + r +
+             " v" + (h - 2 * r) + " a" + r + " " + r + " 0 0 1 " + (-r) + " " + r +
+             " h" + (r - w) + " Z";
+    if (end === "left")
+      return "M" + (x + w) + " " + y + " v" + h + " h" + (r - w) +
+             " a" + r + " " + r + " 0 0 1 " + (-r) + " " + (-r) +
+             " v" + (2 * r - h) + " a" + r + " " + r + " 0 0 1 " + r + " " + (-r) + " Z";
+    if (end === "top")
+      return "M" + x + " " + (y + h) + " v" + (r - h) +
+             " a" + r + " " + r + " 0 0 1 " + r + " " + (-r) + " h" + (w - 2 * r) +
+             " a" + r + " " + r + " 0 0 1 " + r + " " + r + " v" + (h - r) + " Z";
+    return "M" + x + " " + y + " h" + w + " v" + h + " h" + (-w) + " Z";
+  }
+
+  /* tooltip */
+  var tip = document.getElementById("tip");
+  function showTip(title, rows, ev) {
+    while (tip.firstChild) tip.removeChild(tip.firstChild);
+    if (title) {
+      var t = document.createElement("div");
+      t.className = "tt-title"; t.textContent = title; tip.appendChild(t);
+    }
+    rows.forEach(function (r) {
+      var row = document.createElement("div"); row.className = "tt-row";
+      if (r[2]) {
+        var key = document.createElement("span");
+        key.className = "tt-key"; key.style.background = r[2]; row.appendChild(key);
+      }
+      var v = document.createElement("span"); v.className = "tt-val"; v.textContent = r[0];
+      var l = document.createElement("span"); l.className = "tt-lbl"; l.textContent = r[1];
+      row.appendChild(v); row.appendChild(l); tip.appendChild(row);
+    });
+    tip.style.display = "block";
+    moveTip(ev);
+  }
+  function moveTip(ev) {
+    if (!ev) return;
+    var x = (ev.clientX || 0) + 14, y = (ev.clientY || 0) + 14;
+    var r = tip.getBoundingClientRect();
+    if (x + r.width > window.innerWidth - 8) x = ev.clientX - r.width - 12;
+    if (y + r.height > window.innerHeight - 8) y = ev.clientY - r.height - 12;
+    tip.style.left = x + "px"; tip.style.top = y + "px";
+  }
+  function hideTip() { tip.style.display = "none"; }
+
+  // transparent hit rect wired to tooltip + lift; marks = array of nodes to lift
+  function hit(parent, x, y, w, h, title, rows, marks, aria) {
+    var r = E("rect", { x: x, y: y, width: w, height: h, "class": "hit",
+                        tabindex: 0, role: "img", "aria-label": aria }, parent);
+    function on(ev) {
+      showTip(title, rows, ev.clientX !== undefined ? ev : centerEv(r));
+      (marks || []).forEach(function (m) { m.classList.add("lift"); });
+    }
+    function off() {
+      hideTip();
+      (marks || []).forEach(function (m) { m.classList.remove("lift"); });
+    }
+    function centerEv(node) {
+      var b = node.getBoundingClientRect();
+      return { clientX: b.left + b.width / 2, clientY: b.top };
+    }
+    r.addEventListener("pointerenter", on);
+    r.addEventListener("pointermove", function (ev) { moveTip(ev); });
+    r.addEventListener("pointerleave", off);
+    r.addEventListener("focus", on);
+    r.addEventListener("blur", off);
+    return r;
+  }
+
+  /* card scaffold */
+  function card(num, title, sub, opts) {
+    var s = document.createElement("section");
+    s.className = "card";
+    var h = document.createElement("h2"); h.textContent = title; s.appendChild(h);
+    if (sub) {
+      var p = document.createElement("p"); p.className = "sub"; p.textContent = sub;
+      s.appendChild(p);
+    }
+    if (opts && opts.legend) {
+      var lg = document.createElement("div"); lg.className = "legend";
+      opts.legend.forEach(function (item) {
+        var key = document.createElement("span"); key.className = "key";
+        var sw = document.createElement("i"); sw.className = "sw " + item[0];
+        key.appendChild(sw); key.appendChild(document.createTextNode(item[1]));
+        lg.appendChild(key);
+      });
+      s.appendChild(lg);
+    }
+    var sc = document.createElement("div"); sc.className = "scroller"; s.appendChild(sc);
+    if (typeof ONLY_CHART === "undefined" || ONLY_CHART === num) document.getElementById("cards").appendChild(s);
+    return { section: s, scroller: sc };
+  }
+  function svgIn(scroller, height, label) {
+    var svg = E("svg", { viewBox: "0 0 " + VW + " " + height, role: "img",
+                         "aria-label": label }, scroller);
+    return svg;
+  }
+  // **double asterisks** mark the phrase that has to survive a skim.
+  function note(section, text) {
+    var p = document.createElement("p"); p.className = "note";
+    text.split("**").forEach(function (chunk, i) {
+      if (!chunk) return;
+      if (i % 2) {
+        var b = document.createElement("strong");
+        b.textContent = chunk; p.appendChild(b);
+      } else {
+        p.appendChild(document.createTextNode(chunk));
+      }
+    });
+    section.appendChild(p);
+  }
+  // textCols: column indices that hold prose, so they stay left-aligned
+  function tableTwin(section, headers, rows, textCols) {
+    var isNum = function (i) { return i > 0 && (!textCols || textCols.indexOf(i) < 0); };
+    var d = document.createElement("details"); d.className = "tbl";
+    var sm = document.createElement("summary"); sm.textContent = "Data table"; d.appendChild(sm);
+    var wrap = document.createElement("div"); wrap.className = "tblscroll";
+    var t = document.createElement("table");
+    var tr = document.createElement("tr");
+    headers.forEach(function (htext, i) {
+      var th = document.createElement("th");
+      if (isNum(i)) th.className = "num";
+      th.textContent = htext; tr.appendChild(th);
+    });
+    t.appendChild(tr);
+    rows.forEach(function (row) {
+      var trr = document.createElement("tr");
+      row.forEach(function (cell, i) {
+        var td = document.createElement("td");
+        if (isNum(i)) td.className = "num";
+        td.textContent = cell; trr.appendChild(td);
+      });
+      t.appendChild(trr);
+    });
+    wrap.appendChild(t); d.appendChild(wrap); section.appendChild(d);
+  }
+
+  var CLS = { sa: "f-sa", wa: "f-wa", wd: "f-wd", sd: "f-sd" };
+  function seriesColor(k) {
+    return getComputedStyle(document.documentElement).getPropertyValue("--" + k).trim();
+  }
+
+  /* ---------------- chart builders ---------------- */
+
+  // diverging stacked rows: disagree left, agree right, common center
+  function divergingRows(c, rows, opts) {
+    var gutter = opts.gutter, rowH = 34, barH = 20;
+    var topPad = 24, H = topPad + rows.length * rowH + 8;
+    var svg = svgIn(c.scroller, H, opts.aria);
+    var labelPad = 42; // room for % end labels
+    var x0 = gutter + labelPad, x1 = VW - 10 - labelPad;
+
+    var maxA = 0, maxD = 0;
+    rows.forEach(function (r) {
+      r.n = r.sa + r.wa + r.wd + r.sd;
+      r.aShare = (r.sa + r.wa) / r.n;
+      r.dShare = (r.wd + r.sd) / r.n;
+      if (r.aShare > maxA) maxA = r.aShare;
+      if (r.dShare > maxD) maxD = r.dShare;
+    });
+    var s = (x1 - x0) / (maxA + maxD);
+    var cx = x0 + maxD * s;
+
+    // center header labels
+    TXT({ x: cx - 8, y: 14, "text-anchor": "end", "font-size": 12, "class": "t-muted" },
+        "← Disagree", svg);
+    TXT({ x: cx + 8, y: 14, "text-anchor": "start", "font-size": 12, "class": "t-muted" },
+        "Agree →", svg);
+
+    rows.forEach(function (r, i) {
+      var y = topPad + i * rowH + (rowH - barH) / 2;
+      var yc = y + barH / 2;
+      var marks = [];
+
+      // row label, with the group's n bolded onto the end of it
+      var lbl = E("text", { x: gutter - 10, y: yc + 4, "text-anchor": "end",
+                            "font-size": 13 }, svg);
+      lbl.appendChild(document.createTextNode(r.label + (r.count != null ? "  ·  " : "")));
+      if (r.count != null) {
+        var nSpan = E("tspan", { "class": "t-ink" }, lbl);
+        nSpan.textContent = comma(r.count);
+      }
+
+      // segments out from center: agree side wa then sa; disagree side wd then sd
+      var segs = [
+        { k: "wa", dir: 1 }, { k: "sa", dir: 1 },
+        { k: "wd", dir: -1 }, { k: "sd", dir: -1 }
+      ];
+      var accR = 0, accL = 0;
+      segs.forEach(function (sg) {
+        var w = (r[sg.k] / r.n) * s;
+        if (w <= 0) return;
+        var xL, rounded = "none";
+        if (sg.dir === 1) { xL = cx + accR; accR += w; }
+        else { accL += w; xL = cx - accL; }
+        // 2px surface gaps between neighbors (1px shaved off each internal edge)
+        var gx = xL, gw = w;
+        var isOuter = (sg.k === "sa" && sg.dir === 1) || (sg.k === "sd" && sg.dir === -1);
+        if (sg.dir === 1) { gx += 1; gw -= isOuter ? 1 : 2; if (isOuter) rounded = "right"; }
+        else { gx += isOuter ? 0 : 1; gw -= isOuter ? 1 : 2; if (isOuter) rounded = "left"; }
+        if (gw < 0.5) { gw = Math.max(w - 0.5, 0.5); gx = xL; }
+        var p = E("path", { d: barPath(gx, y, gw, barH, rounded),
+                            "class": "mark " + CLS[sg.k] }, svg);
+        marks.push(p);
+      });
+
+      // end labels: totals
+      var aPct = Math.round(100 * r.aShare), dPct = Math.round(100 * r.dShare);
+      TXT({ x: cx + r.aShare * s + 7, y: yc + 4, "font-size": 12.5,
+            "class": (opts.boldEnds ? "t-ink" : "") + " t-num" }, aPct + "%", svg);
+      TXT({ x: cx - r.dShare * s - 7, y: yc + 4, "text-anchor": "end", "font-size": 12.5,
+            "class": "t-muted t-num" }, dPct + "%", svg);
+
+      // hit + tooltip
+      var rows_tt = LIK.map(function (l) {
+        return [r[l.k] + " · " + pct(r[l.k], r.n), l.name, seriesColor(l.k)];
+      });
+      var aria = r.label + ": " + aPct + "% agree, " + dPct + "% disagree, of " +
+                 comma(r.n) + " answering.";
+      hit(svg, 8, y - 4, VW - 16, barH + 8,
+          r.label + " (n=" + comma(r.n) + ")", rows_tt, marks, aria);
+    });
+
+    // center axis line
+    E("line", { x1: cx, y1: topPad - 4, x2: cx, y2: H - 6, "class": "axisline" }, svg);
+    return svg;
+  }
+
+  function divergingTable(section, rows, groupHeader) {
+    tableTwin(section,
+      [groupHeader, "Strongly agree", "Somewhat agree", "Somewhat disagree",
+       "Strongly disagree", "Answered", "Agree"],
+      rows.map(function (r) {
+        var n = r.sa + r.wa + r.wd + r.sd;
+        return [r.label, comma(r.sa), comma(r.wa), comma(r.wd), comma(r.sd),
+                comma(n), pct(r.sa + r.wa, n)];
+      }));
+  }
+
+  // horizontal bars
+  function hbars(c, items, opts) {
+    var gutter = opts.gutter, rowH = 32, barH = 20;
+    var topPad = 6, H = topPad + items.length * rowH + 6;
+    var svg = svgIn(c.scroller, H, opts.aria);
+    var x0 = gutter, x1 = VW - 96;
+    var max = 0;
+    items.forEach(function (it) { if (it[1] > max) max = it[1]; });
+    var s = (x1 - x0) / max;
+
+    items.forEach(function (it, i) {
+      var y = topPad + i * rowH + (rowH - barH) / 2;
+      var yc = y + barH / 2;
+      var w = it[1] * s;
+      var cls = opts.classFor ? opts.classFor(it) : "f-blue";
+      TXT({ x: gutter - 10, y: yc + 4, "text-anchor": "end", "font-size": 13 }, it[0], svg);
+      var p = E("path", { d: barPath(x0, y, w, barH, "right"),
+                          "class": "mark " + cls }, svg);
+      var valTxt = comma(it[1]) + (opts.base ? " · " + pct(it[1], opts.base) : "");
+      TXT({ x: x0 + w + 8, y: yc + 4, "font-size": 12.5, "class": "t-num" }, valTxt, svg);
+      var ttRows = [[comma(it[1]) + (opts.base ? " · " + pct(it[1], opts.base) : ""),
+                     opts.tipLabel || "respondents"]];
+      hit(svg, 8, y - 3, VW - 16, barH + 6, it[0], ttRows, [p],
+          it[0] + ": " + comma(it[1]) +
+          (opts.base ? " (" + pct(it[1], opts.base) + ")" : ""));
+    });
+    E("line", { x1: x0, y1: topPad - 2, x2: x0, y2: H - 4, "class": "axisline" }, svg);
+    return svg;
+  }
+
+  // vertical columns
+  function columns(c, items, opts) {
+    var H = opts.height || 300;
+    var svg = svgIn(c.scroller, H, opts.aria);
+    var padL = 46, padR = 14, padT = opts.padT || 30, padB = opts.padB || 30;
+    var plotW = VW - padL - padR, plotH = H - padT - padB;
+    var max = opts.max;
+    if (!max) { max = 0; items.forEach(function (it) { if (it[1] > max) max = it[1]; }); }
+
+    // y gridlines + ticks
+    var ticks = opts.ticks || [];
+    ticks.forEach(function (tv) {
+      var y = padT + plotH - (tv / max) * plotH;
+      E("line", { x1: padL, y1: y, x2: VW - padR, y2: y, "class": "gridline" }, svg);
+      TXT({ x: padL - 8, y: y + 4, "text-anchor": "end", "font-size": 11.5,
+            "class": "t-muted t-num" }, comma(tv), svg);
+    });
+
+    var band = plotW / items.length;
+    var barW = Math.min(opts.barW || 24, band - 6);
+
+    items.forEach(function (it, i) {
+      var v = it[1];
+      var h = (v / max) * plotH;
+      var x = padL + i * band + (band - barW) / 2;
+      var y = padT + plotH - h;
+      var cls = it[2] || opts.cls || "f-blue";
+      var p = E("path", { d: barPath(x, y, barW, h, "top"), "class": "mark " + cls }, svg);
+
+      // x labels
+      if (!opts.xEvery || i % opts.xEvery === 0 || opts.xForce && opts.xForce.indexOf(i) >= 0) {
+        TXT({ x: x + barW / 2, y: padT + plotH + 18, "text-anchor": "middle",
+              "font-size": opts.xSize || 12, "class": "t-muted" },
+            opts.xLabel ? opts.xLabel(it) : it[0], svg);
+      }
+      // cap labels
+      if (opts.capLabels === true ||
+          (Array.isArray(opts.capLabels) && opts.capLabels.indexOf(i) >= 0)) {
+        TXT({ x: x + barW / 2, y: y - 8, "text-anchor": "middle", "font-size": 12.5,
+              "class": (opts.capBold && opts.capBold.indexOf(i) >= 0 ? "t-ink" : "") + " t-num" },
+            comma(v), svg);
+      }
+      var ttRows = [[comma(v) + (opts.base ? " · " + pct(v, opts.base) : ""),
+                     opts.tipLabel || "responses"]];
+      hit(svg, padL + i * band, padT - 6, band, plotH + 10, it[0], ttRows, [p],
+          it[0] + ": " + comma(v) + (opts.base ? " (" + pct(v, opts.base) + ")" : ""));
+    });
+    E("line", { x1: padL, y1: padT + plotH, x2: VW - padR, y2: padT + plotH,
+                "class": "axisline" }, svg);
+    return svg;
+  }
+
+  // Left-to-right in the same order the bars run: disagree out to the left.
+  var divergingLegend = [
+    ["c-sd", "Strongly disagree"], ["c-wd", "Somewhat disagree"],
+    ["c-wa", "Somewhat agree"], ["c-sa", "Strongly agree"]
+  ];
+
+  /* ---------------- Chart 1 ---------------- */
+  // Two camps, both starting at the same left edge with their *strongly* block
+  // first: bar length is the size of the camp, and the first block is how hard
+  // that camp feels it. Strong support and strong opposition then line up
+  // three responses apart, which is the whole point.
+  (function () {
+    var c = card(1, "Most supporters only somewhat agree; most opponents strongly disagree", "");
+
+    var camps = [
+      { label: "Support redistricting", within: "of supporters",
+        segs: [{ k: "sa", v: overall.sa, name: "Strongly agree" },
+               { k: "wa", v: overall.wa, name: "Somewhat agree" }] },
+      { label: "Oppose redistricting", within: "of opponents",
+        segs: [{ k: "sd", v: overall.sd, name: "Strongly disagree" },
+               { k: "wd", v: overall.wd, name: "Somewhat disagree" }] }
+    ];
+
+    var answered = 1470;
+    var gutter = 158, barH = 36, rowH = 92, topPad = 10;
+    var H = topPad + camps.length * rowH;
+    var svg = svgIn(c.scroller, H,
+      "Bar chart comparing how strongly supporters and opponents of redistricting feel.");
+    var x0 = gutter, x1 = VW - 16, max = 0;
+    camps.forEach(function (cp) {
+      cp.n = cp.segs[0].v + cp.segs[1].v;
+      if (cp.n > max) max = cp.n;
+    });
+    var s = (x1 - x0) / max;
+
+    camps.forEach(function (cp, i) {
+      var y = topPad + i * rowH, yc = y + barH / 2, marks = [];
+
+      TXT({ x: gutter - 14, y: yc, "text-anchor": "end", "font-size": 14, "class": "t-ink" },
+          cp.label, svg);
+      TXT({ x: gutter - 14, y: yc + 17, "text-anchor": "end", "font-size": 12.5,
+            "class": "t-muted t-num" },
+          comma(cp.n) + " · " + pct(cp.n, answered), svg);
+
+      var acc = 0;
+      cp.segs.forEach(function (sg, j) {
+        var w = sg.v * s;
+        var gx = x0 + acc + (j ? 1 : 0), gw = w - 1;
+        var p = E("path", { d: barPath(gx, y, gw, barH, j ? "right" : "none"),
+                            "class": "mark " + CLS[sg.k] }, svg);
+        marks.push(p);
+
+        TXT({ x: x0 + acc, y: y + barH + 18, "font-size": 12.5,
+              "class": (j ? "t-muted" : "t-ink") + " t-num" },
+            comma(sg.v) + " · " + pct(sg.v, cp.n) + (j ? "" : " " + cp.within), svg);
+        TXT({ x: x0 + acc, y: y + barH + 34, "font-size": 12, "class": "t-muted" },
+            sg.name, svg);
+        acc += w;
+      });
+
+      // dashed guide off the end of strong support, carried down through the
+      // opposing row so the two "strongly" blocks can be compared by eye
+      if (i === 0) {
+        E("line", { x1: x0 + cp.segs[0].v * s, y1: y - 4,
+                    x2: x0 + cp.segs[0].v * s,
+                    y2: topPad + (camps.length - 1) * rowH + barH + 6,
+                    "class": "axisline", "stroke-dasharray": "3 4" }, svg);
+      }
+
+      hit(svg, 8, y - 6, VW - 16, barH + 12,
+          cp.label + " (n=" + comma(cp.n) + ")",
+          cp.segs.map(function (sg) {
+            return [comma(sg.v) + " · " + pct(sg.v, cp.n), sg.name, seriesColor(sg.k)];
+          }), marks,
+          cp.label + ": " + comma(cp.n) + " respondents — " +
+          pct(cp.segs[0].v, cp.n) + " " + cp.segs[0].name.toLowerCase() + ", " +
+          pct(cp.segs[1].v, cp.n) + " " + cp.segs[1].name.toLowerCase() + ".");
+    });
+
+    note(c.section, "The statement was **“I would support adjusting attendance zones if necessary to better balance enrollment and address future growth.”** 1,470 of the 1,540 respondents answered it and 70 skipped it. The survey offered no neutral option.");
+    tableTwin(c.section, ["Response", "Respondents", "Share of the 1,470 answering"],
+      LIK.map(function (l) { return [l.name, comma(overall[l.k]), pct(overall[l.k], answered)]; })
+        .concat([["Skipped the question", "70", "—"]]));
+  })();
+
+  /* ---------------- Chart 2 ---------------- */
+  (function () {
+    var rows = schools.map(function (r) { return Object.assign({}, r); });
+    rows.forEach(function (r) {
+      var n = r.sa + r.wa + r.wd + r.sd;
+      r.count = n;
+      r.sortKey = (r.sa + r.wa) / n;
+    });
+    rows.sort(function (a, b) { return b.sortKey - a.sortKey; });
+    var c = card(2, "Position on Redistricting by School Affiliation", "",
+      { legend: divergingLegend });
+    divergingRows(c, rows, {
+      gutter: 196, boldEnds: true,
+      aria: "Diverging stacked bar chart of redistricting support by school community."
+    });
+    note(c.section, "Number after each school is total number of respondents who selected that school. **Respondents who selected multiple schools count toward each one.**");
+    divergingTable(c.section, rows, "School community");
+  })();
+
+  /* ---------------- Chart 3 ---------------- */
+  (function () {
+    var c = card(3,
+      "Nearly three-quarters of all responses landed in the final eight days",
+      "Responses per day, May 13 – June 8, 2026. After averaging about 20 a day for two weeks, " +
+      "1,125 responses — 73% of the total — arrived June 1 or later. June 5 alone brought 419, " +
+      "more than the survey's entire first two weeks combined.");
+    var items = timeline.map(function (d) { return [d[0], d[1]]; });
+    columns(c, items, {
+      height: 320, aria: "Column chart of survey responses per day.",
+      ticks: [0, 100, 200, 300, 400], max: 440,
+      capLabels: [23], capBold: [23],
+      xEvery: 100, xForce: [0, 7, 14, 19, 23, 26], xSize: 11.5,
+      barW: 18, tipLabel: "responses that day", padT: 26
+    });
+    tableTwin(c.section, ["Date (2026)", "Responses"],
+      timeline.map(function (d) { return [d[0], comma(d[1])]; }));
+  })();
+
+  /* ---------------- Chart 4 ---------------- */
+  (function () {
+    var c = card(4,
+      "June 1 belonged to the opposition — then a bigger wave answered back",
+      "Support among respondents in each stretch of the survey window. Sentiment ran roughly " +
+      "two-to-one in favor until June 1–2, when 181 responses arrived leaning against the plan " +
+      "(45% agree). The final six days brought five times as many responses — and they leaned " +
+      "63% in favor, restoring the overall margin.",
+      { legend: divergingLegend });
+    divergingRows(c, periods.map(function (r) { return Object.assign({}, r); }), {
+      gutter: 230, boldEnds: true,
+      aria: "Diverging stacked bar chart of redistricting support by response period."
+    });
+    note(c.section, "Bars show shares of those answering the support question in each period.");
+    divergingTable(c.section, periods, "Period");
+  })();
+
+  /* ---------------- Chart 5 ---------------- */
+  (function () {
+    var rows = roles.map(function (r) {
+      var copy = Object.assign({}, r);
+      copy.count = r.sa + r.wa + r.wd + r.sd;
+      return copy;
+    });
+    var c = card(5, "Position on Redistricting by Respondent Category", "",
+      { legend: divergingLegend });
+    divergingRows(c, rows, {
+      gutter: 200, boldEnds: true,
+      aria: "Diverging stacked bar chart of redistricting support by respondent category."
+    });
+    note(c.section, "Number after each category is respondents answering. **Respondents could check several relationships and are counted in every category they selected.**");
+    divergingTable(c.section, roles, "Respondent group");
+  })();
+
+  /* ---------------- Chart 6 ---------------- */
+  (function () {
+    var c = card(6,
+      "“Which priorities do you consider most important in the development of new school boundaries?”",
+      "A multiple-choice question with eight options and up to two selections. The form did not enforce " +
+      "that cap: 18 respondents recorded three or four selections (11 with three, 7 with four).");
+    hbars(c, priorities, {
+      gutter: 240, base: 1466, tipLabel: "chose this priority",
+      aria: "Bar chart of boundary priorities chosen by respondents."
+    });
+    note(c.section, "Shares add to more than 100% because most respondents picked two. Bar labels are each option's header; the full option text is in the table below.");
+    tableTwin(c.section, ["Priority", "Chose it", "Share of answered", "Full option text"],
+      priorities.map(function (it) { return [it[0], comma(it[1]), pct(it[1], 1466), it[2]]; }),
+      [3]);
+  })();
+
+  /* ---------------- Chart 7 ---------------- */
+  (function () {
+    var c = card(7,
+      "Capacity — the reason for redistricting — ranks near the bottom of what people want",
+      "“What facility planning objectives are MOST important to you?” Two choices; shares are of " +
+      "the 1,419 who answered. Safety and academics dominate. Building capacity and utilization — " +
+      "the enrollment-balancing goals driving the boundary review — come last.");
+    hbars(c, objectives, {
+      gutter: 300, base: 1419, tipLabel: "chose this objective",
+      aria: "Bar chart of facility planning objectives chosen by respondents."
+    });
+    note(c.section, "Shares add to more than 100% because the question asked for two. 55 respondents named only one and five named three, so the bars total 2,788.");
+    tableTwin(c.section, ["Objective", "Chose it", "Share of answered"],
+      objectives.map(function (it) { return [it[0], comma(it[1]), pct(it[1], 1419)]; }));
+  })();
+
+  /* ---------------- Chart 8 ---------------- */
+  (function () {
+    var c = card(8,
+      "Class and diversity run through the open comments",
+      "Respondents whose written answers contain each word, out of all 1,540. Neighborhoods are " +
+      "the single biggest topic — but the class-and-diversity cluster (highlighted) reaches 416 " +
+      "respondents, 27% of everyone who took the survey, mostly over which neighborhoods the " +
+      "draft pulls out of high-poverty schools.",
+      { legend: [["c-blue", "Class & diversity cluster"], ["c-deemph", "Other themes"]] });
+    hbars(c, themes, {
+      gutter: 268, base: 1540, tipLabel: "respondents mention it",
+      classFor: function (it) { return it[2] ? "f-blue" : "f-deemph"; },
+      aria: "Bar chart of themes in open-text comments, with class and diversity themes highlighted."
+    });
+    note(c.section, "Each bar counts respondents whose comments contain the exact string in the last column — nothing is inferred, and the same search in the comment explorer returns the same number. One respondent can appear on several bars, and a mention says nothing about which side they take. Substrings catch word families rather than one word: “bus” takes in busing and busses, plus three stray hits on business and robust; “together” is most often “keep neighborhoods together,” which overlaps the top bar.");
+    tableTwin(c.section, ["Theme", "Respondents", "Share of all", "Exact string searched"],
+      themes.map(function (it) {
+        return [it[0] + (it[2] ? " ●" : ""), comma(it[1]), pct(it[1], 1540), "“" + it[3] + "”"];
+      }));
+  })();
+
+  /* ---------------- Chart 9 ---------------- */
+  (function () {
+    var c = card(9,
+      "Ford's Colony is the neighborhood on everyone's mind",
+      "Respondents naming each neighborhood or area in their written comments, out of all 1,540. " +
+      "Ford's Colony — which the draft plan splits between attendance zones — is named twice as " +
+      "often as Kingsmill, whose proposed move out of James River Elementary anchors the " +
+      "socioeconomic argument.");
+    hbars(c, hoods, {
+      gutter: 170, base: 1540, tipLabel: "respondents name it",
+      aria: "Bar chart of neighborhoods named in open-text comments."
+    });
+    note(c.section, "Substring matches on the last column, reproducible in the comment explorer. “colony” catches Ford's Colony with and without its apostrophe. Norge and Toano name schools as well as places: 8 of Norge's 64 and 3 of Toano's 24 mention only the school, so read those two bars as the area's ceiling.");
+    tableTwin(c.section, ["Neighborhood / area", "Respondents", "Share of all", "Exact string searched"],
+      hoods.map(function (it) { return [it[0], comma(it[1]), pct(it[1], 1540), "“" + it[2] + "”"]; }));
+  })();
+
+  /* ---------------- Chart 10 ---------------- */
+  (function () {
+    var c = card(10,
+      "The buildings themselves get good marks",
+      "“What is your perception of the overall condition of the school facilities you are " +
+      "associated with?” Of the 1,437 who answered, 76% say excellent or good, and under 5% say " +
+      "poor or unsatisfactory — the dispute is about who attends which building, not the buildings.");
+    columns(c, facilities.map(function (f) { return [f[0], f[1], f[2]]; }), {
+      height: 320, aria: "Column chart of perceived school facility condition.",
+      ticks: [0, 250, 500, 750], max: 850, capLabels: true,
+      base: 1437, barW: 24, xSize: 12.5, padT: 30, tipLabel: "respondents"
+    });
+    tableTwin(c.section, ["Rating", "Respondents", "Share of answered"],
+      facilities.map(function (f) { return [f[0], comma(f[1]), pct(f[1], 1437)]; }));
+  })();
+})();
+</script>
+</body>
+</html>
