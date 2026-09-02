@@ -38,3 +38,21 @@ __pycache__/
 
 # Serena tool scratch (matches wjcc/omnomnom/trivia)
 .serena/
+
+# Bash-sandbox bind-mount artifacts. The sandbox masks a list of dotfiles by
+# bind-mounting /dev/null over them inside the project root, which leaves them
+# here as zero-byte character special files -- not real config, just mount
+# points. They are recreated on every sandboxed command and only clutter
+# `git status`. Confirm with `stat -c %F <file>`: "character special file"
+# means artifact, "regular file" means someone actually put config there.
+.bashrc
+.bash_profile
+.zshrc
+.zprofile
+.profile
+.gitconfig
+.gitmodules
+.ripgreprc
+.idea
+.vscode
+.mcp.json
