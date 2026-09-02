@@ -3,6 +3,32 @@
 Residue only — what was tried and abandoned, why a road was taken, what is still open.
 The diff is in `git log`; the numbers are in the scripts.
 
+## 2026-09-02 — Per-chart PNGs + iframe embeds (charts 2, 5, 6)
+
+Closes the DEVLOG open item "the goal is per-chart PNGs rather than a page."
+`build_chart_embeds.py` slices `charts.html` into single-chart documents: a
+one-line patch to `card()` (`ONLY_CHART` guard on the sole `getElementById("cards")`
+append) makes the shared script render just the wanted card while the other nine
+builders run harmlessly into detached sections — cheaper than forking the script.
+
+Two outputs per chart. The `site/embeds/*.html` keep the `<details>` table and stay
+responsive (for `<iframe>` on jwcaterine.com — Substack accepts no HTML/JS/iframe,
+which is the whole reason for the split). The `site/substack/*.png` hide the table
+and are shot at a 760 px viewport / 3× → 2160 px wide, matching the older charts 1
+and 7 shots already in the post. Chart 6's note ended "...in the table below.",
+which dangles once the table is gone, so for the PNG that clause is rewritten to be
+the pointer ("...in the data table at the bottom of the Substack post") rather than
+having a second sentence bolted on; charts 2 and 5 notes carry no table reference
+so they just get the sentence appended.
+
+Chart 6 intro text: "two picks" → "two selections", "four picks" → "four
+selections", in `charts.html` itself. The note's "most respondents picked two" was
+deliberately left alone — the ask was the intro.
+
+Open: the embeds inline unqualified selectors (`h2`, `svg text`, `.wrap`…). Fine
+inside an iframe; if they ever get inlined into Astro they need re-anchoring under a
+wrapper class, same bite as MIGRATION.md step 4 for the explorer.
+
 ## 2026-08-31 — Chart 5 rebuilt on overlapping categories; chart 6 labels made verbatim
 
 Chart 5 previously assigned each respondent to exactly one bucket via a priority
