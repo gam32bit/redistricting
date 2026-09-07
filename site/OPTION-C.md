@@ -13,8 +13,9 @@ owns its whole document and has no Astro around it:
   the async fetch (4a) was needed, and `build_pages.py` already performs it.
 - No `npm`, no build step, no Actions workflow, no Astro version to keep up with.
 
-The cost is that it isn't *on* jwcaterine.com — it's a page you link to. Given this is a tool
-rather than an article, that reads fine.
+The cost is that it isn't *inside* the Astro site — it's a page you link to. It now answers on
+`redistricting.jwcaterine.com`, so the seam is only visible in the design, and given this is a
+tool rather than an article, that reads fine.
 
 ## Why `docs/` and not the repo root
 
@@ -22,9 +23,11 @@ Pages can serve from `main` root, from `main` + `/docs`, or from a `gh-pages` br
 repo holds the pipeline as well as the site, so root is out, and a separate branch adds a
 moving part for nothing. `/docs` it is.
 
-That makes the live URL a **project subpath** — `https://gam32bit.github.io/redistricting/` —
-which is exactly why the corpus is fetched by a relative `data/comments.json`. An absolute
-`/data/…` would resolve to the user root and 404. Don't "fix" it.
+That made the original URL a **project subpath** — `https://gam32bit.github.io/redistricting/` —
+which is why the corpus is fetched by a relative `data/comments.json`. An absolute `/data/…`
+would have resolved to the user root and 404'd. The custom domain serves from the root, so an
+absolute path would happen to work there, but the subpath URL still resolves and the relative
+one is correct on both. Don't "fix" it.
 
 ## What's built and verified
 
@@ -54,26 +57,21 @@ Note that `comments.csv` is deliberately *not* copied into `docs/` — nothing f
 Download CSV button builds a blob from the rows currently filtered. Unlike in the artifact
 sandbox, those blob downloads do work on Pages.
 
-## Turning Pages on
+## Pages, as configured
 
-The repo is public and the commit is local. Remaining steps, all yours:
+Live at **<https://redistricting.jwcaterine.com/>** (7 September 2026). Settings → Pages is
+set to *Deploy from a branch*, Branch `main`, Folder **`/docs`**; `gam32bit.github.io/redistricting/`
+still resolves and redirects to the subdomain, so links shared before the move keep working.
 
-1. **Push** — `git push -u origin main`.
-2. **Settings → Pages** → Source: *Deploy from a branch*, Branch: `main`, Folder: **`/docs`**.
-   Save. The first build takes a minute or two.
-3. **Check it live** at `https://gam32bit.github.io/redistricting/`. Confirm the responses
-   load — that URL, not a local server, is the real test of the relative fetch path.
-4. **Link it from the post**: replace `SEARCH_PAGE_URL` in `blog-post-search-page.md`.
+### How the subdomain is wired
 
-**Optional, and worth it later: a subdomain.** `survey.jwcaterine.com` reads far better in a
-newsletter than a `github.io` path.
-
-- At your DNS host, add a `CNAME` record: `survey` → `gam32bit.github.io`.
-- Settings → Pages → Custom domain → `survey.jwcaterine.com`. That writes a `CNAME` file into
-  the repo, so pull afterwards.
-- Wait for the certificate, then tick **Enforce HTTPS**.
-- Then update `BASE_URL` in `build_pages.py` and rebuild, so `canonical` and `og:url` point at
-  the new address instead of the github.io one.
+- WordPress.com (the registrar for `jwcaterine.com`) holds a `CNAME` record: `redistricting`
+  → `gam32bit.github.io`.
+- Settings → Pages → Custom domain wrote **`docs/CNAME`** into the repo. That file is *not*
+  generated — `build_pages.py` only writes `index.html`, `data/` and `.nojekyll`, and deletes
+  nothing, so rebuilds leave it alone. Don't remove it.
+- `BASE_URL` in `build_pages.py` names the subdomain, which is what `canonical` and `og:url`
+  emit.
 - This doesn't touch the main site. A repo holds one custom domain, and `jwcaterine.com` stays
   with `jwcaterine-site`.
 

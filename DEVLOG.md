@@ -100,3 +100,30 @@ were verified against `site/explorer.build.html`.
 Note that `site/explorer.build.html` served over a bare `http.server` shows mojibake:
 it is a fragment with no `<meta charset>`, and the host normally supplies the head.
 `docs/index.html` is the copy to eyeball if encoding matters.
+
+## 2026-09-07 — Custom domain, and a note about the redactions
+
+The explorer moved to `redistricting.jwcaterine.com`. `survey.` was the name penciled into
+OPTION-C.md and `redistricting.` won on being descriptive; nothing else was weighed, so if it
+ever reads as too long, the switch is one DNS record and a `BASE_URL` edit. The subdomain is a
+plain CNAME to `gam32bit.github.io` with a `docs/CNAME` file — no Actions workflow, no move
+into the Astro site, and MIGRATION.md's Options A and B stay unbuilt.
+
+`docs/index.html` was stale on arrival: the previous session edited `site/explorer.html` and
+ran only `build_site.py`, so the Pages copy lagged two changes behind. There are two builders
+over one source and neither knows about the other. Worth collapsing into one entry point, or
+at least a check that fails when `docs/` predates `explorer.html`.
+
+The new method note says redactions "show up as blank spaces," which is the reader-facing
+description rather than the literal one: the division's redaction leaves a single ordinary
+space, so `2 years at , then having to do 1 year at` is what's actually in the payload. Nobody
+scanning the page will parse that as a gap unless told, hence the note. Resisted quantifying
+how many responses are affected — the obvious regex for gap-like spacing (`\S  +\S| \.| ,`)
+catches `We live .7 miles away` and any ordinary `for example,`, so its 29 is not a number
+worth printing.
+
+Confirmed while answering a question about the "Other" chip: `Other Stakeholder` is a real
+survey option, one of five on the relationship question, ticked by 54 of 1,540 and alone by
+only 14. What those respondents meant is unrecoverable — the export duplicated the parent
+field into the `relationship_other` write-in column byte-for-byte in all 1,540 records, which
+is why `build_corpus.py` drops it.
