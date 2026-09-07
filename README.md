@@ -3,7 +3,7 @@
 Tools for reading the Williamsburg–James City County Schools redistricting survey, which
 the division published in June 2026 as a 3,106-page PDF of 1,540 responses.
 
-**Live search page: <https://gam32bit.github.io/redistricting/>**
+**Live search page: <https://redistricting.jwcaterine.com/>**
 
 Source document, published by the division:
 

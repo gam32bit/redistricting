@@ -7,7 +7,7 @@ draft: true
 ---
 
 <!-- Target: src/content/blog/2026-08-17-a-search-page-for-the-wjcc-redistricting-survey/index.md
-     Plain markdown, so it works as .md or .mdx. Replace SEARCH_PAGE_URL below. -->
+     Plain markdown, so it works as .md or .mdx. Link already points at the live search page. -->
 
 I'd heard the redistricting survey results would be posted at the end of June, and they
 were: one PDF, 3,106 pages.
@@ -21,7 +21,7 @@ It is also 3,106 pages. I wanted to know what people said about buses, or about 
 Colony, or about diversity, and there's no good way to ask a PDF that kind of question. So
 I put together a page that lets you ask it.
 
-**[Search the redistricting survey →](SEARCH_PAGE_URL)**
+**[Search the redistricting survey →](https://redistricting.jwcaterine.com/)**
 
 Type a word and you get every response that uses it, with the word highlighted. You can
 narrow to parents, or staff, or a single school, or one of the five questions, or just the

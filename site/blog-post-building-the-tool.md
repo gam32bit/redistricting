@@ -10,7 +10,7 @@ draft: true
      Companion to the Substack findings post and to site/blog-post-search-page.md
      (the short reader-facing announcement). This one is about the process of directing
      the build, told through what I actually asked for.
-     Replace SEARCH_PAGE_URL, CHARTS_URL, SUBSTACK_POST_URL below. -->
+     Replace CHARTS_URL, SUBSTACK_POST_URL below. -->
 
 I wrote a [separate post](SUBSTACK_POST_URL) about what 1,540 people actually said in the
 WJCC redistricting survey. This one is about the tool I built to let you check my work — and
@@ -170,6 +170,6 @@ words were factually wrong, which explanations didn't make sense, and what the t
 readers about its own construction. The code is generated. The judgment isn't, and that's
 the part I'd want anyone building something similar to actually spend their time on.
 
-**[The search page is here →](SEARCH_PAGE_URL).** **[The ten-chart overview is here →](CHARTS_URL).**
+**[The search page is here →](https://redistricting.jwcaterine.com/).** **[The ten-chart overview is here →](CHARTS_URL).**
 And if you want the findings rather than the process — the actual survey results — that's
 the [companion post](SUBSTACK_POST_URL).

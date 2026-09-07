@@ -30,7 +30,7 @@ DESC = ("Search all 1,374 written responses to the Williamsburg-James City Count
 # Used only for canonical + og:url, which need absolute values. Change this if the
 # site later moves to a custom subdomain; "" omits both tags rather than emit a
 # wrong one.
-BASE_URL = "https://gam32bit.github.io/redistricting/"
+BASE_URL = "https://redistricting.jwcaterine.com/"
 BACK_LINK = "https://jwcaterine.com/"
 SUBSTACK_LINK = "https://jwcaterine.substack.com/"
 
