@@ -33,11 +33,19 @@ DESC = ("Search all 1,374 written responses to the Williamsburg-James City Count
 BASE_URL = "https://redistricting.jwcaterine.com/"
 BACK_LINK = "https://jwcaterine.com/"
 # Link-preview card image: a screenshot of the page itself, copied into docs/ below.
-# 982x560 is the raw capture, left unscaled -- it clears every scraper minimum, and
-# padding it to a nominal 1200x630 would only cost sharpness. Keep the dimensions in
-# sync with the file; scrapers that trust the tags render a broken card otherwise.
+#
+# 1200x630 exactly, because the ratio is what matters, not the pixel count. X and
+# LinkedIn render link images at 1.91:1 and CENTER-CROP anything else -- the first
+# version here was the raw 982x560 capture (1.75:1) and lost the top of the heading
+# and the timeline's date labels. og:image:width/height only describe the file; they
+# do not stop the crop, so the pixels themselves have to match.
+#
+# Built from the raw capture by padding the width to 1067x560 with the page
+# background (no resampling) and then one Lanczos step to 1200x630. Keep these
+# constants in sync with the file, and check `identify` output rather than just
+# grepping the tags -- a wrong ratio is invisible in the markup.
 PREVIEW = "preview.png"
-PREVIEW_W, PREVIEW_H = 982, 560
+PREVIEW_W, PREVIEW_H = 1200, 630
 PREVIEW_ALT = ("The search page, showing the keyword box, the respondent, school and "
                "question filters, and the timeline of response dates.")
 SUBSTACK_LINK = "https://jwcaterine.substack.com/"
