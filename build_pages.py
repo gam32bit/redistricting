@@ -86,6 +86,15 @@ head = [
     f'<meta property="og:title" content="{TITLE}">',
     f'<meta property="og:description" content="{DESC}">',
     '<meta name="twitter:card" content="summary">',
+    # GA4, same property as jwcaterine.com. Plain snippet: this is a single
+    # static document, so gtag's automatic page_view is the right one.
+    '<script async src="https://www.googletagmanager.com/gtag/js?id=G-1WR900MHDR"></script>',
+    '<script>',
+    '  window.dataLayer = window.dataLayer || [];',
+    '  function gtag(){dataLayer.push(arguments);}',
+    "  gtag('js', new Date());",
+    "  gtag('config', 'G-1WR900MHDR');",
+    '</script>',
 ]
 if BASE_URL:
     head += [f'<link rel="canonical" href="{BASE_URL}">',
