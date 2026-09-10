@@ -56,3 +56,8 @@ __pycache__/
 .idea
 .vscode
 .mcp.json
+
+# Screencasts and their GIF conversions. Recorded locally for the devlog /
+# Substack posts; the published copies live in the post, not in git history.
+*.mp4
+*.gif
