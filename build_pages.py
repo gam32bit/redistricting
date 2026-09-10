@@ -32,6 +32,14 @@ DESC = ("Search all 1,374 written responses to the Williamsburg-James City Count
 # wrong one.
 BASE_URL = "https://redistricting.jwcaterine.com/"
 BACK_LINK = "https://jwcaterine.com/"
+# Link-preview card image: a screenshot of the page itself, copied into docs/ below.
+# 982x560 is the raw capture, left unscaled -- it clears every scraper minimum, and
+# padding it to a nominal 1200x630 would only cost sharpness. Keep the dimensions in
+# sync with the file; scrapers that trust the tags render a broken card otherwise.
+PREVIEW = "preview.png"
+PREVIEW_W, PREVIEW_H = 982, 560
+PREVIEW_ALT = ("The search page, showing the keyword box, the respondent, school and "
+               "question filters, and the timeline of response dates.")
 SUBSTACK_LINK = "https://jwcaterine.substack.com/"
 
 html = open(SRC, encoding="utf-8").read()
@@ -85,7 +93,10 @@ head = [
     '<meta property="og:type" content="website">',
     f'<meta property="og:title" content="{TITLE}">',
     f'<meta property="og:description" content="{DESC}">',
-    '<meta name="twitter:card" content="summary">',
+    # summary_large_image, not summary: with a wide screenshot the small card
+    # crops it to a square thumbnail. og:image must be absolute -- scrapers do
+    # not resolve relative paths -- so it is skipped entirely without BASE_URL.
+    '<meta name="twitter:card" content="summary_large_image">',
     # GA4, same property as jwcaterine.com. Plain snippet: this is a single
     # static document, so gtag's automatic page_view is the right one.
     '<script async src="https://www.googletagmanager.com/gtag/js?id=G-1WR900MHDR"></script>',
@@ -98,7 +109,12 @@ head = [
 ]
 if BASE_URL:
     head += [f'<link rel="canonical" href="{BASE_URL}">',
-             f'<meta property="og:url" content="{BASE_URL}">']
+             f'<meta property="og:url" content="{BASE_URL}">',
+             f'<meta property="og:image" content="{BASE_URL}{PREVIEW}">',
+             f'<meta property="og:image:width" content="{PREVIEW_W}">',
+             f'<meta property="og:image:height" content="{PREVIEW_H}">',
+             f'<meta property="og:image:alt" content="{PREVIEW_ALT}">',
+             f'<meta name="twitter:image" content="{BASE_URL}{PREVIEW}">']
 head += ['</head>', '<body>']
 
 # Two destinations, not one trail of breadcrumbs: the arrow belongs only to the
@@ -114,6 +130,7 @@ doc = "\n".join(head) + "\n" + BACK + html + "</body>\n</html>\n"
 os.makedirs(f"{OUT}/data", exist_ok=True)
 open(f"{OUT}/index.html", "w", encoding="utf-8").write(doc)
 shutil.copyfile("site/comments.json", f"{OUT}/data/comments.json")
+shutil.copyfile(f"site/{PREVIEW}", f"{OUT}/{PREVIEW}")
 # comments.csv is deliberately NOT copied: nothing on the page fetches it. The
 # Download CSV button builds a blob from the rows currently filtered, so shipping a
 # second, full-corpus CSV would be 960 KB nobody links to. (Unlike in the artifact
@@ -122,4 +139,5 @@ open(f"{OUT}/.nojekyll", "w").close()   # keeps Pages from filtering paths it di
 
 print(f"{OUT}/index.html      {os.path.getsize(OUT + '/index.html')/1024:.0f} KB")
 print(f"{OUT}/data/comments.json {os.path.getsize(OUT + '/data/comments.json')/1024:.0f} KB")
+print(f"{OUT}/{PREVIEW}        {os.path.getsize(OUT + '/' + PREVIEW)/1024:.0f} KB")
 print("wrote .nojekyll")

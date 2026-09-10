@@ -59,5 +59,10 @@ __pycache__/
 
 # Screencasts and their GIF conversions. Recorded locally for the devlog /
 # Substack posts; the published copies live in the post, not in git history.
+#
+# One exception: media/ holds the GIFs the README embeds, which have to be in
+# git for GitHub to render them. Keep that directory to demo clips the docs
+# actually reference -- raw screencasts still stay out.
 *.mp4
 *.gif
+!media/*.gif

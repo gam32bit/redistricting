@@ -5,6 +5,8 @@ the division published in June 2026 as a 3,106-page PDF of 1,540 responses.
 
 **Live search page: <https://redistricting.jwcaterine.com/>**
 
+![The search page in use: typing "diversity" narrows 1,540 responses to the 229 that contain the word, updates the respondent-group counts, and highlights each match in the text](media/explorer-demo.gif)
+
 Source document, published by the division:
 
 <https://wjccschools.org/wp-content/uploads/2026/06/Redacted-Redistricting-Survey-Raw-Results-Final-June-2026.pdf>
@@ -58,4 +60,6 @@ permanent.
 | `site/comments.json` | The public corpus, 851 KB. |
 | `site/comments.csv` | One row per respondent. |
 | `site/*.md` | Pipeline notes, migration plans, post drafts. |
+| `site/preview.png` | The link-preview card image. Copied into `docs/` by `build_pages.py`. |
 | `site/substack/` | Charts 1, 2 and 7 as PNGs for Substack. |
+| `media/` | Demo GIFs the docs embed. Other screencasts stay out of git. |
