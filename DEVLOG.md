@@ -127,3 +127,15 @@ survey option, one of five on the relationship question, ticked by 54 of 1,540 a
 only 14. What those respondents meant is unrecoverable — the export duplicated the parent
 field into the `relationship_other` write-in column byte-for-byte in all 1,540 records, which
 is why `build_corpus.py` drops it.
+
+## 2026-09-10 — GA4 on the explorer page
+
+Added the GA4 tag to `build_pages.py`'s head list rather than `docs/index.html`, which the
+builder overwrites. Deliberately the plain snippet, not the `send_page_view: false` +
+`astro:page-load` variant used on jwcaterine.com: nothing here fires `astro:page-load`, so
+copying that version over would have recorded zero pageviews. No new data stream and no
+cross-domain config — the cookie is set on jwcaterine.com and carries to the subdomain.
+
+Open question, not yet measured: the page's `jumpToHash` + `hashchange` listener can trip
+GA4's Enhanced Measurement history trigger into an extra `page_view` per hash change. If the
+counts read high against actual visits, that setting is the first thing to uncheck.
